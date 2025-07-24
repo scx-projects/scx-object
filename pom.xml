@@ -132,7 +132,7 @@
         <scx-common.version>4.0.1</scx-common.version>
         <scx-reflect.version>4.1.0</scx-reflect.version>
         <jackson.version>2.19.2</jackson.version>
-        <testng.version>7.10.2</testng.version>
+        <testng.version>7.11.0</testng.version>
 
     </properties>
 
