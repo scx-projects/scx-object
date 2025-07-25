@@ -6,8 +6,7 @@ import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.IntNode;
 import cool.scx.object.node.Node;
-import cool.scx.object.node.NumberNode;
-import cool.scx.object.node.TextNode;
+import cool.scx.object.node.ValueNode;
 
 import java.time.DateTimeException;
 import java.time.Month;
@@ -33,19 +32,18 @@ public class MonthNodeMapper implements NodeMapper<Month> {
         }
         //2, 这里我们实际上可以宽松一点, 同时支持数字和字符串
         // 先使用数字解析
-        if (node instanceof NumberNode numberNode) {
+        if (node instanceof ValueNode valueNode) {
             try {
-                return Month.of(numberNode.asInt());
+                return Month.of(valueNode.asInt());
             } catch (DateTimeException e) {
                 throw new NodeMappingException(e);
-            }
-        }
-        // 再尝试使用字符串解析
-        if (node instanceof TextNode textNode) {
-            try {
-                return Month.valueOf(textNode.asText().toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new NodeMappingException(e);
+            } catch (NumberFormatException e) {
+                // 无法转换为数字 这里在尝试使用 字符串解析
+                try {
+                    return Month.valueOf(valueNode.asText().toUpperCase());
+                } catch (IllegalArgumentException ex) {
+                    throw new NodeMappingException(ex);
+                }
             }
         }
         // 无法转换 直接报错
