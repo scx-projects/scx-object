@@ -7,22 +7,22 @@ import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.Node;
 import cool.scx.object.node.TextNode;
 
-import java.time.Instant;
+import java.time.Duration;
 import java.time.format.DateTimeParseException;
 
-/// InstantNodeMapper
+/// DurationNodeMapper
 ///
 /// @author scx567888
 /// @version 0.0.1
-public final class InstantNodeMapper implements NodeMapper<Instant> {
+public final class DurationNodeMapper implements NodeMapper<Duration> {
 
     @Override
-    public Node toNode(Instant value, ToNodeContext context) {
+    public Node toNode(Duration value, ToNodeContext context) {
         return new TextNode(value.toString());
     }
 
     @Override
-    public Instant fromNode(Node node, FromNodeContext context) throws NodeMappingException {
+    public Duration fromNode(Node node, FromNodeContext context) throws NodeMappingException {
         //1, 处理 null
         if (node.isNull()) {
             return null;
@@ -30,7 +30,7 @@ public final class InstantNodeMapper implements NodeMapper<Instant> {
         //2, 只处理 TextNode 类型
         if (node instanceof TextNode textNode) {
             try {
-                return Instant.parse(textNode.asText());
+                return Duration.parse(textNode.asText());
             } catch (DateTimeParseException e) {
                 throw new NodeMappingException(e);
             }
