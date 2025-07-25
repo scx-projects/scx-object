@@ -101,9 +101,6 @@
     <properties>
 
         <!-- *********************** 以下为依赖包版本 *********************** -->
-        <scx-functional.version>4.0.1</scx-functional.version>
-        <scx-collections.version>4.0.1</scx-collections.version>
-        <scx-common.version>4.0.1</scx-common.version>
         <scx-reflect.version>4.1.0</scx-reflect.version>
         <jackson.version>2.19.2</jackson.version>
         <testng.version>7.10.2</testng.version>
