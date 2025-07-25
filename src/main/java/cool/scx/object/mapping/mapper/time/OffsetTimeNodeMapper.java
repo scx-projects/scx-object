@@ -7,22 +7,22 @@ import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.Node;
 import cool.scx.object.node.TextNode;
 
-import java.time.LocalDate;
+import java.time.OffsetTime;
 import java.time.format.DateTimeParseException;
 
-/// LocalDateNodeMapper
+/// OffsetTimeNodeMapper
 ///
 /// @author scx567888
 /// @version 0.0.1
-public final class LocalDateNodeMapper implements NodeMapper<LocalDate> {
+public final class OffsetTimeNodeMapper implements NodeMapper<OffsetTime> {
 
     @Override
-    public Node toNode(LocalDate value, ToNodeContext context) {
-        return new TextNode(context.options().localDateFormatter().format(value));
+    public Node toNode(OffsetTime value, ToNodeContext context) {
+        return new TextNode(context.options().offsetTimeFormatter().format(value));
     }
 
     @Override
-    public LocalDate fromNode(Node node, FromNodeContext context) throws NodeMappingException {
+    public OffsetTime fromNode(Node node, FromNodeContext context) throws NodeMappingException {
         //1, 处理 null
         if (node.isNull()) {
             return null;
@@ -30,7 +30,7 @@ public final class LocalDateNodeMapper implements NodeMapper<LocalDate> {
         //2, 只处理 TextNode 类型
         if (node instanceof TextNode textNode) {
             try {
-                return LocalDate.parse(textNode.asText(), context.options().localDateFormatter());
+                return OffsetTime.parse(textNode.asText(), context.options().offsetTimeFormatter());
             } catch (DateTimeParseException e) {
                 throw new NodeMappingException(e);
             }
