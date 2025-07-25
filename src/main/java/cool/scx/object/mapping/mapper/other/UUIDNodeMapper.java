@@ -34,5 +34,5 @@ public final class UUIDNodeMapper implements NodeMapper<UUID> {
         //3, 非 TextNode 类型无法转换直接报错
         throw new NodeMappingException("Unsupported node type: " + node.getClass());
     }
-    
+
 }
