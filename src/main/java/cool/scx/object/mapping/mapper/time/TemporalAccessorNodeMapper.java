@@ -19,12 +19,10 @@ import java.time.temporal.TemporalQuery;
 public final class TemporalAccessorNodeMapper<T extends TemporalAccessor> implements NodeMapper<T> {
 
     private final DateTimeFormatter formatter;
-    private final boolean useTimestamp;
     private final TemporalQuery<T> temporalQuery;
 
-    public TemporalAccessorNodeMapper(DateTimeFormatter formatter, boolean useTimestamp, TemporalQuery<T> temporalQuery) {
+    public TemporalAccessorNodeMapper(DateTimeFormatter formatter, TemporalQuery<T> temporalQuery) {
         this.formatter = formatter;
-        this.useTimestamp = useTimestamp;
         this.temporalQuery = temporalQuery;
     }
 
