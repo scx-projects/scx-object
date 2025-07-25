@@ -158,7 +158,7 @@ public final class NodeMapperSelector {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> NodeMapper<T> findNodeMapper(TypeInfo type) {
+    public <T> NodeMapper<T> findNodeMapper(TypeInfo type) throws NodeMappingException {
         var nodeMapper = NODE_MAPPER_MAP.get(type);
         if (nodeMapper != null) {
             return (NodeMapper<T>) nodeMapper;
@@ -179,7 +179,7 @@ public final class NodeMapperSelector {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> NodeMapper<T> findNodeMapper(Class<T> type) {
+    public <T> NodeMapper<T> findNodeMapper(Class<T> type) throws NodeMappingException {
         var nodeMapper = NODE_MAPPER_MAP.get(type);
         if (nodeMapper != null) {
             return (NodeMapper<T>) nodeMapper;

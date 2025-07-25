@@ -25,27 +25,10 @@ public final class MapNodeMapper implements NodeMapper<Map<?, ?>> {
     private final NodeMapper<Object> keyNodeMapper;
     private final NodeMapper<Object> valueNodeMapper;
 
-    public MapNodeMapper(ClassInfo classInfo, NodeMapperSelector selector) {
+    public MapNodeMapper(ClassInfo classInfo, NodeMapper<Object> keyNodeMapper, NodeMapper<Object> valueNodeMapper) {
         this.classInfo = classInfo;
-        var mapType = this.classInfo.findSuperType(Map.class);
-        if (mapType == null) {
-            throw new IllegalStateException("Map class not found");
-        }
-        var keyType = mapType.bindings().get("K");
-        // 为 null 回退到 String
-        if (keyType == null) {
-            keyType = typeOf(String.class);
-        }
-        // 为 null 回退到 Object
-        var valueType = mapType.bindings().get("V");
-        if (valueType == null) {
-            valueType = typeOf(Object.class);
-        }
-        // 这个 keyNodeMapper 和 valueNodeMapper 实际上只能用于 fromNode,
-        // 因为在 toNode 的时候,由于 Map 的泛型是被擦除的,
-        // 所以我们是不能假定 每一个元素的类型都是 keyType, valueType
-        this.keyNodeMapper = selector.findNodeMapper(keyType);
-        this.valueNodeMapper = selector.findNodeMapper(valueType);
+        this.keyNodeMapper = keyNodeMapper;
+        this.valueNodeMapper = valueNodeMapper;
     }
 
     @Override

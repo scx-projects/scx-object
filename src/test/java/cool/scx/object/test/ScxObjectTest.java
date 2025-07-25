@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cool.scx.object.ScxObject;
 import cool.scx.object.mapping.NodeMappingException;
+import cool.scx.object.serializer.NodeSerializeException;
 import cool.scx.reflect.TypeReference;
 import org.testng.annotations.Test;
 
@@ -16,14 +17,14 @@ public class ScxObjectTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public static void main(String[] args) throws NodeMappingException, JsonProcessingException {
+    public static void main(String[] args) throws NodeMappingException, JsonProcessingException, NodeSerializeException {
         test1();
         test2();
         test3();
     }
 
     @Test
-    public static void test1() throws JsonProcessingException {
+    public static void test1() throws JsonProcessingException, NodeMappingException {
         // 准备数据
         var smallList = new ArrayList<Integer>();
         for (int i = 0; i < 20; i++) {
@@ -50,7 +51,7 @@ public class ScxObjectTest {
 
     }
 
-    public static void test1_0(ArrayList<Integer> smallList, ArrayList<Integer> bigList, Integer[] smallArray, Integer[] bigArray, int[] smallIntArray1, int[] bitIntArray2) {
+    public static void test1_0(ArrayList<Integer> smallList, ArrayList<Integer> bigList, Integer[] smallArray, Integer[] bigArray, int[] smallIntArray1, int[] bitIntArray2) throws NodeMappingException {
 
         ScxObject.convertValue(smallList, Integer[].class);
         ScxObject.convertValue(smallList, int[].class);
@@ -111,7 +112,7 @@ public class ScxObjectTest {
     }
 
     @Test
-    public static void test2() throws JsonProcessingException {
+    public static void test2() throws JsonProcessingException, NodeSerializeException, NodeMappingException {
         var user = new User();
         user.name = "小明";
         user.name1 = "小明";

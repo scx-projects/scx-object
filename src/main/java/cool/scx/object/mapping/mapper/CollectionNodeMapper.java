@@ -1,13 +1,14 @@
 package cool.scx.object.mapping.mapper;
 
-import cool.scx.object.mapping.*;
+import cool.scx.object.mapping.FromNodeContext;
+import cool.scx.object.mapping.NodeMapper;
+import cool.scx.object.mapping.NodeMappingException;
+import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.ArrayNode;
 import cool.scx.object.node.Node;
 import cool.scx.reflect.ClassInfo;
 
 import java.util.*;
-
-import static cool.scx.reflect.ScxReflect.typeOf;
 
 /// CollectionNodeMapper
 ///
@@ -18,22 +19,9 @@ public final class CollectionNodeMapper implements NodeMapper<Collection<?>> {
     private final ClassInfo classInfo;
     private final NodeMapper<Object> componentNodeMapper;
 
-    public CollectionNodeMapper(ClassInfo classInfo, NodeMapperSelector selector) {
+    public CollectionNodeMapper(ClassInfo classInfo, NodeMapper<Object> componentNodeMapper) {
         this.classInfo = classInfo;
-        var collectionType = this.classInfo.findSuperType(Collection.class);
-        if (collectionType == null) {
-            throw new IllegalStateException("Collection class not found");
-        }
-        // 尝试获取 componentType 
-        var componentType = collectionType.bindings().get("E");
-        // 有可能是 null, 回退到 Object
-        if (componentType == null) {
-            componentType = typeOf(Object.class);
-        }
-        // 这个 componentNodeMapper 实际上只能用于 fromNode,
-        // 因为在 toNode 的时候,由于 Collection 的泛型是被擦除的,
-        // 所以我们是不能假定 每一个元素的类型都是 componentType 
-        this.componentNodeMapper = selector.findNodeMapper(componentType);
+        this.componentNodeMapper = componentNodeMapper;
     }
 
     @Override
