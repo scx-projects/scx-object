@@ -8,7 +8,7 @@ import cool.scx.object.mapping.mapper.primitive.*;
 import cool.scx.object.mapping.mapper.math.BigDecimalNodeMapper;
 import cool.scx.object.mapping.mapper.math.BigIntegerNodeMapper;
 import cool.scx.object.mapping.mapper.ObjectArrayNodeMapper;
-import cool.scx.object.mapping.mapper.ObjectNodeMapper;
+import cool.scx.object.mapping.mapper.BeanNodeMapper;
 import cool.scx.object.mapping.mapper.primitive_array.*;
 import cool.scx.object.mapping.mapper.RecordNodeMapper;
 import cool.scx.object.mapping.mapper.StringNodeMapper;
@@ -180,7 +180,7 @@ public final class NodeMapperSelector {
                         if (classInfo.isAbstract()) {
                             throw new NodeMappingException("无法处理抽象类: " + classInfo);
                         }
-                        yield new ObjectNodeMapper(classInfo);
+                        yield new BeanNodeMapper(classInfo);
                     }
                     case ENUM -> new EnumNodeMapper<>(classInfo);
                     case ANNOTATION -> throw new NodeMappingException("无法处理注解: " + classInfo);

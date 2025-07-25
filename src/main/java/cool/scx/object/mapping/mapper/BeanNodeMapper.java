@@ -20,14 +20,14 @@ import static cool.scx.object.node.NullNode.NULL;
 ///
 /// @author scx567888
 /// @version 0.0.1
-public final class ObjectNodeMapper implements NodeMapper<Object> {
+public final class BeanNodeMapper implements NodeMapper<Object> {
 
     private final ClassInfo classInfo;
     private final ConstructorInfo defaultConstructor;
     private final FieldInfo[] readableFields;
     private final FieldInfo[] writableFields;
 
-    public ObjectNodeMapper(ClassInfo classInfo) {
+    public BeanNodeMapper(ClassInfo classInfo) {
         this.classInfo = classInfo;
         // 这里我们只是获取一下这个 构造器, 并不进行 是否存在或是否可访问的校验, 
         // 因为有时候 ObjectNodeMapper 只会被用作 toNode 根本用不上 defaultConstructor, 所以这里延后校验以提供更强的容错性.
