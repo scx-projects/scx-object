@@ -1,6 +1,6 @@
 package cool.scx.object.serializer;
 
-public class NodeSerializeException extends Exception {
+public class NodeSerializeException extends RuntimeException {
 
     public NodeSerializeException(Throwable cause) {
         super(cause);

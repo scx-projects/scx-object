@@ -1,6 +1,6 @@
 package cool.scx.object.parser;
 
-public class NodeParseException extends Exception {
+public class NodeParseException extends RuntimeException {
 
     public NodeParseException(Throwable cause) {
         super(cause);

@@ -1,7 +1,7 @@
 package cool.scx.object.mapping;
 
 /// 映射异常
-public class NodeMappingException extends Exception {
+public class NodeMappingException extends RuntimeException {
 
     public NodeMappingException(String message) {
         super(message);
