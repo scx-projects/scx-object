@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cool.scx.object.ScxObject;
+import cool.scx.object.parser.NodeParseException;
+import cool.scx.object.serializer.NodeSerializeException;
 import org.testng.annotations.Test;
 
 public class NodeCodecTest {
@@ -74,13 +76,13 @@ public class NodeCodecTest {
     private static final ObjectMapper jsonMapper = new JsonMapper();
     private static final ObjectMapper xmlMapper = new XmlMapper();
 
-    public static void main(String[] args) throws JsonProcessingException {
+    public static void main(String[] args) throws JsonProcessingException, NodeParseException, NodeSerializeException {
         test1();
         test2();
     }
 
     @Test
-    public static void test1() throws JsonProcessingException {
+    public static void test1() throws NodeParseException, NodeSerializeException {
 
         var node = ScxObject.fromJson(json);
 

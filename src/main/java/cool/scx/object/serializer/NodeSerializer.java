@@ -8,7 +8,6 @@ import cool.scx.object.node.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UncheckedIOException;
 
 /// 此序列化器基于递归下降方式进行序列化, 以保证代码的简洁和可维护性.
 /// 但 Node 实际上允许自引用, 也就是说存在无限递归导致栈溢出的风险.
@@ -31,15 +30,15 @@ public final class NodeSerializer {
                 .build());
     }
 
-    public String serializeAsString(Node node) throws JsonProcessingException {
+    public String serializeAsString(Node node) throws NodeSerializeException {
         var writer = new StringWriter();
         try {
             serializeAndClose(jsonFactory.createGenerator(writer), node);
         } catch (JsonProcessingException e) {
-            throw e;
+            throw new NodeSerializeException(e);
         } catch (IOException e) {
             // 在 StringWriter 中, IOException 理论上永远不会发生
-            throw new UncheckedIOException(e);
+            throw new RuntimeException(e);
         }
         return writer.toString();
     }

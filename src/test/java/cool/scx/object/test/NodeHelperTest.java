@@ -1,17 +1,18 @@
 package cool.scx.object.test;
 
 import cool.scx.object.NodeHelper;
+import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.node.ObjectNode;
 import org.testng.annotations.Test;
 
 public class NodeHelperTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NodeMappingException {
         test1();
     }
 
     @Test
-    public static void test1() {
+    public static void test1() throws NodeMappingException {
         var objectNode = new ObjectNode();
         NodeHelper.set(objectNode, "a.b.c.d.e.f", new int[]{1, 2, 3, 4});
         System.out.println(objectNode);

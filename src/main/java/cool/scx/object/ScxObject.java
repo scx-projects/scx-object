@@ -1,16 +1,13 @@
 package cool.scx.object;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import cool.scx.object.mapper.*;
+import cool.scx.object.mapping.*;
 import cool.scx.object.node.Node;
+import cool.scx.object.parser.NodeParseException;
 import cool.scx.object.parser.NodeParser;
 import cool.scx.object.parser.NodeParserOptions;
-import cool.scx.object.serializer.NodeSerializer;
-import cool.scx.object.serializer.NodeSerializerOptions;
-import cool.scx.object.serializer.XmlNodeSerializer;
-import cool.scx.object.serializer.XmlNodeSerializerOptions;
+import cool.scx.object.serializer.*;
 import cool.scx.reflect.TypeInfo;
 import cool.scx.reflect.TypeReference;
 
@@ -43,27 +40,27 @@ public final class ScxObject {
         NODE_MAPPER_SELECTOR = new NodeMapperSelector();
     }
 
-    public static Node fromJson(String json) throws JsonProcessingException {
+    public static Node fromJson(String json) throws NodeParseException {
         return JSON_PARSER.parse(json);
     }
 
-    public static Node fromXml(String xml) throws JsonProcessingException {
+    public static Node fromXml(String xml) throws NodeParseException {
         return XML_PARSER.parse(xml);
     }
 
-    public static Node fromJson(File file) throws IOException {
+    public static Node fromJson(File file) throws IOException, NodeParseException {
         return JSON_PARSER.parse(file);
     }
 
-    public static Node fromXml(File file) throws IOException {
+    public static Node fromXml(File file) throws IOException, NodeParseException {
         return XML_PARSER.parse(file);
     }
 
-    public static String toJson(Node node) throws JsonProcessingException {
+    public static String toJson(Node node) throws NodeSerializeException {
         return JSON_SERIALIZER.serializeAsString(node);
     }
 
-    public static String toXml(Node node) throws JsonProcessingException {
+    public static String toXml(Node node) throws NodeSerializeException {
         return XML_SERIALIZER.serializeAsString(node);
     }
 
@@ -90,48 +87,48 @@ public final class ScxObject {
         return nodeToValue(node, type);
     }
 
-    public static <T> T fromJson(String json, TypeInfo type) throws JsonProcessingException, NodeMappingException {
+    public static <T> T fromJson(String json, TypeInfo type) throws NodeMappingException, NodeParseException {
         var node = fromJson(json);
         return nodeToValue(node, type);
     }
 
-    public static <T> T fromJson(String json, Class<T> type) throws JsonProcessingException, NodeMappingException {
+    public static <T> T fromJson(String json, Class<T> type) throws NodeMappingException, NodeParseException {
         return fromJson(json, typeOf(type));
     }
 
-    public static <T> T fromJson(String json, TypeReference<T> type) throws JsonProcessingException, NodeMappingException {
+    public static <T> T fromJson(String json, TypeReference<T> type) throws NodeMappingException, NodeParseException {
         return fromJson(json, typeOf(type));
     }
 
-    public static String toJson(Object object) throws JsonProcessingException, NodeMappingException {
+    public static String toJson(Object object) throws NodeMappingException, NodeSerializeException {
         var node = valueToNode(object);
         return toJson(node);
     }
 
-    public static String toJson(Object object, ToNodeOptionsImpl toNodeOptions) throws JsonProcessingException, NodeMappingException {
+    public static String toJson(Object object, ToNodeOptionsImpl toNodeOptions) throws NodeMappingException, NodeSerializeException {
         var node = valueToNode(object, toNodeOptions);
         return toJson(node);
     }
 
-    public static <T> T fromXml(String xml, TypeInfo type) throws JsonProcessingException, NodeMappingException {
+    public static <T> T fromXml(String xml, TypeInfo type) throws NodeMappingException, NodeParseException {
         var node = fromXml(xml);
         return nodeToValue(node, type);
     }
 
-    public static <T> T fromXml(String xml, Class<T> type) throws JsonProcessingException, NodeMappingException {
+    public static <T> T fromXml(String xml, Class<T> type) throws NodeMappingException, NodeParseException {
         return fromXml(xml, typeOf(type));
     }
 
-    public static <T> T fromXml(String xml, TypeReference<T> type) throws JsonProcessingException, NodeMappingException {
+    public static <T> T fromXml(String xml, TypeReference<T> type) throws NodeMappingException, NodeParseException {
         return fromXml(xml, typeOf(type));
     }
 
-    public static String toXml(Object object) throws JsonProcessingException, NodeMappingException {
+    public static String toXml(Object object) throws NodeMappingException, NodeSerializeException {
         var node = valueToNode(object);
         return toXml(node);
     }
 
-    public static String toXml(Object object, ToNodeOptionsImpl toNodeOptions) throws JsonProcessingException, NodeMappingException {
+    public static String toXml(Object object, ToNodeOptionsImpl toNodeOptions) throws NodeMappingException, NodeSerializeException {
         var node = valueToNode(object, toNodeOptions);
         return toXml(node);
     }

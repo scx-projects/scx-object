@@ -5,7 +5,6 @@ import cool.scx.object.node.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
 /// 此解析器基于递归下降方式进行解析, 以保证代码的简洁和可维护性.
 /// 但递归解析存在栈溢出的风险, 特别是在嵌套层数较大时.
@@ -31,19 +30,23 @@ public final class NodeParser {
                 .build());
     }
 
-    public Node parse(String json) throws JsonProcessingException {
+    public Node parse(String json) throws NodeParseException {
         try {
             return parseAndClose(jsonFactory.createParser(json));
         } catch (JsonProcessingException e) {
-            throw e;
+            throw new NodeParseException(e);
         } catch (IOException e) {
             // 理论上永远不会发生
-            throw new UncheckedIOException(e);
+            throw new RuntimeException(e);
         }
     }
 
-    public Node parse(File file) throws IOException {
-        return parseAndClose(jsonFactory.createParser(file));
+    public Node parse(File file) throws NodeParseException, IOException {
+        try {
+            return parseAndClose(jsonFactory.createParser(file));
+        } catch (JsonProcessingException e) {
+            throw new NodeParseException(e);
+        }
     }
 
     private Node parseAndClose(JsonParser parser) throws IOException {
