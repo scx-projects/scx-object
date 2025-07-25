@@ -71,24 +71,6 @@
 
         <dependency>
             <groupId>cool.scx</groupId>
-            <artifactId>scx-functional</artifactId>
-            <version>${scx-functional.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>cool.scx</groupId>
-            <artifactId>scx-collections</artifactId>
-            <version>${scx-collections.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>cool.scx</groupId>
-            <artifactId>scx-common</artifactId>
-            <version>${scx-common.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>cool.scx</groupId>
             <artifactId>scx-reflect</artifactId>
             <version>${scx-reflect.version}</version>
         </dependency>
@@ -96,14 +78,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <!-- Jackson 数据类型拓展包 针对 (jsr310)[https://jcp.org/en/jsr/detail?id=310] -->
-        <!-- 添加了对新的时间和日期Api (LocalDateTime、DateTimeFormatter) 等的支持 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
 
