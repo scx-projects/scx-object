@@ -7,16 +7,14 @@ import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.Node;
 import cool.scx.object.node.TextNode;
 
-import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /// YearMonthNodeMapper
 ///
 /// @author scx567888
 /// @version 0.0.1
-public class YearMonthNodeMapper implements NodeMapper<YearMonth> {
+public final class YearMonthNodeMapper implements NodeMapper<YearMonth> {
 
     @Override
     public Node toNode(YearMonth value, ToNodeContext context) {
