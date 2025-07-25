@@ -17,15 +17,9 @@ import java.time.format.DateTimeParseException;
 /// @version 0.0.1
 public final class LocalTimeNodeMapper implements NodeMapper<LocalTime> {
 
-    private final DateTimeFormatter formatter;
-
-    public LocalTimeNodeMapper(DateTimeFormatter formatter) {
-        this.formatter = formatter;
-    }
-
     @Override
     public Node toNode(LocalTime value, ToNodeContext context) {
-        return new TextNode(formatter.format(value));
+        return new TextNode(context.options().localTimeFormatter().format(value));
     }
 
     @Override
@@ -37,7 +31,7 @@ public final class LocalTimeNodeMapper implements NodeMapper<LocalTime> {
         //2, 只处理 TextNode 类型
         if (node instanceof TextNode textNode) {
             try {
-                return LocalTime.parse(textNode.asText(), formatter);
+                return LocalTime.parse(textNode.asText(), context.options().localTimeFormatter());
             } catch (DateTimeParseException e) {
                 throw new NodeMappingException(e);
             }

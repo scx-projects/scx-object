@@ -8,7 +8,6 @@ import cool.scx.object.node.Node;
 import cool.scx.object.node.TextNode;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /// LocalDateTimeNodeMapper
@@ -17,15 +16,9 @@ import java.time.format.DateTimeParseException;
 /// @version 0.0.1
 public final class LocalDateTimeNodeMapper implements NodeMapper<LocalDateTime> {
 
-    private final DateTimeFormatter formatter;
-
-    public LocalDateTimeNodeMapper(DateTimeFormatter formatter) {
-        this.formatter = formatter;
-    }
-
     @Override
     public Node toNode(LocalDateTime value, ToNodeContext context) {
-        return new TextNode(formatter.format(value));
+        return new TextNode(context.options().localDateTimeFormatter().format(value));
     }
 
     @Override
@@ -37,7 +30,7 @@ public final class LocalDateTimeNodeMapper implements NodeMapper<LocalDateTime> 
         //2, 只处理 TextNode 类型
         if (node instanceof TextNode textNode) {
             try {
-                return LocalDateTime.parse(textNode.asText(), formatter);
+                return LocalDateTime.parse(textNode.asText(), context.options().localDateTimeFormatter());
             } catch (DateTimeParseException e) {
                 throw new NodeMappingException(e);
             }
