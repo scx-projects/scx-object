@@ -15,7 +15,7 @@ import java.time.Year;
 ///
 /// @author scx567888
 /// @version 0.0.1
-public class YearNodeMapper implements NodeMapper<Year> {
+public final class YearNodeMapper implements NodeMapper<Year> {
 
     @Override
     public Node toNode(Year value, ToNodeContext context) throws NodeMappingException {
