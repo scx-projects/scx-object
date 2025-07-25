@@ -14,10 +14,15 @@ public class EnumNodeMapperFactory implements NodeMapperFactory {
     public NodeMapper<?> createNodeMapper(TypeInfo typeInfo, NodeMapperSelector selector) {
         if (typeInfo instanceof ClassInfo classInfo) {
             if (classInfo.classKind() == ClassKind.ENUM) {
-                return new EnumNodeMapper<>(classInfo);
+                return createEnumNodeMapper(classInfo);
             }
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <E extends Enum<E>> EnumNodeMapper<E> createEnumNodeMapper(ClassInfo classInfo) {
+        return new EnumNodeMapper<>((Class<E>) classInfo.enumClass().rawClass());
     }
 
 }

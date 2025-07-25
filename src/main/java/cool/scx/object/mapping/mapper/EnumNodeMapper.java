@@ -14,13 +14,10 @@ import cool.scx.reflect.ClassInfo;
 /// @version 0.0.1
 public final class EnumNodeMapper<E extends Enum<E>> implements NodeMapper<E> {
 
-    private final ClassInfo classInfo;
     private final Class<E> enumClass;
 
-    @SuppressWarnings("unchecked")
-    public EnumNodeMapper(ClassInfo classInfo) {
-        this.classInfo = classInfo;
-        this.enumClass = (Class<E>) classInfo.enumClass().rawClass();
+    public EnumNodeMapper(Class<E> enumClass) {
+        this.enumClass = enumClass;
     }
 
     @Override
@@ -45,10 +42,6 @@ public final class EnumNodeMapper<E extends Enum<E>> implements NodeMapper<E> {
         }
         //3, 非 TextNode 类型无法转换直接报错
         throw new NodeMappingException("Unsupported node type: " + node.getClass());
-    }
-
-    public ClassInfo classInfo() {
-        return classInfo;
     }
 
 }
