@@ -31,15 +31,15 @@ public final class NodeSerializer {
                 .build());
     }
 
-    public String serializeAsString(Node node) throws JsonProcessingException {
+    public String serializeAsString(Node node) throws NodeSerializeException {
         var writer = new StringWriter();
         try {
             serializeAndClose(jsonFactory.createGenerator(writer), node);
         } catch (JsonProcessingException e) {
-            throw e;
+            throw new NodeSerializeException(e);
         } catch (IOException e) {
             // 在 StringWriter 中, IOException 理论上永远不会发生
-            throw new UncheckedIOException(e);
+            throw new RuntimeException(e);
         }
         return writer.toString();
     }
