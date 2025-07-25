@@ -1,6 +1,9 @@
 package cool.scx.object.mapping.mapper;
 
-import cool.scx.object.mapping.*;
+import cool.scx.object.mapping.FromNodeContext;
+import cool.scx.object.mapping.NodeMapper;
+import cool.scx.object.mapping.NodeMappingException;
+import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.Node;
 import cool.scx.object.node.ObjectNode;
 import cool.scx.object.node.TextNode;
@@ -12,8 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static cool.scx.reflect.ScxReflect.typeOf;
 
 /// MapNodeMapper
 ///

@@ -10,6 +10,11 @@ import cool.scx.reflect.TypeInfo;
 
 public class EnumNodeMapperFactory implements NodeMapperFactory {
 
+    @SuppressWarnings("unchecked")
+    public static <E extends Enum<E>> EnumNodeMapper<E> createEnumNodeMapper(ClassInfo classInfo) {
+        return new EnumNodeMapper<>((Class<E>) classInfo.enumClass().rawClass());
+    }
+
     @Override
     public NodeMapper<?> createNodeMapper(TypeInfo typeInfo, NodeMapperSelector selector) {
         if (typeInfo instanceof ClassInfo classInfo) {
@@ -18,11 +23,6 @@ public class EnumNodeMapperFactory implements NodeMapperFactory {
             }
         }
         return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <E extends Enum<E>> EnumNodeMapper<E> createEnumNodeMapper(ClassInfo classInfo) {
-        return new EnumNodeMapper<>((Class<E>) classInfo.enumClass().rawClass());
     }
 
 }

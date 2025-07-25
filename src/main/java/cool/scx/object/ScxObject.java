@@ -1,7 +1,6 @@
 package cool.scx.object;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import cool.scx.object.mapping.*;
 import cool.scx.object.node.Node;
@@ -97,7 +96,7 @@ public final class ScxObject {
         return fromJson(json, typeOf(type));
     }
 
-    public static <T> T fromJson(String json, TypeReference<T> type) throws  NodeMappingException, NodeParseException {
+    public static <T> T fromJson(String json, TypeReference<T> type) throws NodeMappingException, NodeParseException {
         return fromJson(json, typeOf(type));
     }
 

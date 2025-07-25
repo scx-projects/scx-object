@@ -6,7 +6,6 @@ import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.Node;
 import cool.scx.object.node.TextNode;
-import cool.scx.reflect.ClassInfo;
 
 /// EnumNodeMapper
 ///

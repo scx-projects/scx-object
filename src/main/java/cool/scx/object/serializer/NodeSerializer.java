@@ -8,7 +8,6 @@ import cool.scx.object.node.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UncheckedIOException;
 
 /// 此序列化器基于递归下降方式进行序列化, 以保证代码的简洁和可维护性.
 /// 但 Node 实际上允许自引用, 也就是说存在无限递归导致栈溢出的风险.

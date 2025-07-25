@@ -12,7 +12,6 @@ import cool.scx.reflect.ConstructorInfo;
 import cool.scx.reflect.FieldInfo;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 import static cool.scx.object.node.NullNode.NULL;
 
