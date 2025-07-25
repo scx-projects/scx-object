@@ -1,6 +1,6 @@
 package cool.scx.object;
 
-import cool.scx.object.mapper.NodeMappingException;
+import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.node.ArrayNode;
 import cool.scx.object.node.Node;
 import cool.scx.object.node.ObjectNode;

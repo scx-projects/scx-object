@@ -3,7 +3,7 @@ package cool.scx.object.test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cool.scx.object.ScxObject;
-import cool.scx.object.mapper.NodeMappingException;
+import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.reflect.TypeReference;
 import org.testng.annotations.Test;
 

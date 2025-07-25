@@ -3,7 +3,7 @@ package cool.scx.object;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import cool.scx.object.mapper.*;
+import cool.scx.object.mapping.*;
 import cool.scx.object.node.Node;
 import cool.scx.object.parser.NodeParser;
 import cool.scx.object.parser.NodeParserOptions;
