@@ -21,6 +21,9 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.time.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static cool.scx.reflect.ScxReflect.typeOf;
 import static java.time.format.DateTimeFormatter.*;
@@ -32,9 +35,11 @@ import static java.time.format.DateTimeFormatter.*;
 public final class NodeMapperSelector {
 
     //同时缓存 Class 和 TypeInfo, 加速查找
-    private final Map<Object, NodeMapper<?>> NODE_MAPPER_MAP = new HashMap<>();
+    private final Map<Object, NodeMapper<?>> NODE_MAPPER_MAP = new ConcurrentHashMap<>();
 
     private final List<NodeMapperFactory> NODE_MAPPER_FACTORY_LIST = new ArrayList<>();
+
+    private final Lock LOCK = new ReentrantLock();
 
     public NodeMapperSelector() {
 
@@ -154,24 +159,54 @@ public final class NodeMapperSelector {
 
     @SuppressWarnings("unchecked")
     public <T> NodeMapper<T> findNodeMapper(TypeInfo type) {
-        var nodeMapper = (NodeMapper<T>) NODE_MAPPER_MAP.get(type);
+        var nodeMapper = NODE_MAPPER_MAP.get(type);
         if (nodeMapper != null) {
-            return nodeMapper;
+            return (NodeMapper<T>) nodeMapper;
         }
-        var newNodeMapper = (NodeMapper<T>) this.createNodeMapper(type);
-        registerNodeMapper(type, newNodeMapper);
-        return newNodeMapper;
+        LOCK.lock();
+        try {
+            // 双重检查
+            nodeMapper = NODE_MAPPER_MAP.get(type);
+            if (nodeMapper != null) {
+                return (NodeMapper<T>) nodeMapper;
+            }
+            nodeMapper = this.createNodeMapper(type);
+            NODE_MAPPER_MAP.put(type, nodeMapper);
+            return (NodeMapper<T>) nodeMapper;
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     @SuppressWarnings("unchecked")
     public <T> NodeMapper<T> findNodeMapper(Class<T> type) {
-        var nodeMapper = (NodeMapper<T>) NODE_MAPPER_MAP.get(type);
+        var nodeMapper = NODE_MAPPER_MAP.get(type);
         if (nodeMapper != null) {
-            return nodeMapper;
+            return (NodeMapper<T>) nodeMapper;
         }
-        var newNodeMapper = (NodeMapper<T>) this.createNodeMapper(typeOf(type));
-        registerNodeMapper(type, newNodeMapper);
-        return newNodeMapper;
+        LOCK.lock();
+        try {
+            // 双重检查
+            nodeMapper = NODE_MAPPER_MAP.get(type);
+            if (nodeMapper != null) {
+                return (NodeMapper<T>) nodeMapper;
+            }
+            var typeInfo = typeOf(type);
+            // 检查是否已经通过 typeInfo 构建
+            var oldNodeMapper = NODE_MAPPER_MAP.get(typeInfo);
+            if (oldNodeMapper != null) {
+                NODE_MAPPER_MAP.put(type, oldNodeMapper);
+                return (NodeMapper<T>) oldNodeMapper;
+            }
+            // 构建新的 nodeMapper
+            nodeMapper = this.createNodeMapper(typeInfo);
+            // 冗余 key 缓存
+            NODE_MAPPER_MAP.put(type, nodeMapper);
+            NODE_MAPPER_MAP.put(typeInfo, nodeMapper);
+            return (NodeMapper<T>) nodeMapper;
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     /// 创建新的 NodeMapper
