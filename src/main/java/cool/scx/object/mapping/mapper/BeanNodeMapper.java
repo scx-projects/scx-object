@@ -27,29 +27,11 @@ public final class BeanNodeMapper implements NodeMapper<Object> {
     private final FieldInfo[] readableFields;
     private final FieldInfo[] writableFields;
 
-    public BeanNodeMapper(ClassInfo classInfo) {
+    public BeanNodeMapper(ClassInfo classInfo, ConstructorInfo defaultConstructor, FieldInfo[] readableFields, FieldInfo[] writableFields) {
         this.classInfo = classInfo;
-        // 这里我们只是获取一下这个 构造器, 并不进行 是否存在或是否可访问的校验, 
-        // 因为有时候 ObjectNodeMapper 只会被用作 toNode 根本用不上 defaultConstructor, 所以这里延后校验以提供更强的容错性.
-        this.defaultConstructor = this.classInfo.defaultConstructor();
-        // 可读的字段, 这里只要 public 的实例字段
-        this.readableFields = filterReadableFields(this.classInfo);
-        // 可写的字段, 相较于可读 我们过滤掉 final 
-        this.writableFields = filterWritableFields(this.readableFields);
-    }
-
-    private static FieldInfo[] filterReadableFields(ClassInfo classInfo) {
-        // 因为 ObjectNodeMapper 每种类型的对象只会创建一次, 所以这里 使用 Stream 并没有什么性能问题
-        // 注意我们这里需要连父级的字段也带上 
-        return Arrays.stream(classInfo.allFields())
-                .filter(c -> !c.isStatic() && c.accessModifier() == AccessModifier.PUBLIC)
-                .peek(c -> c.setAccessible(true))// 处理一些类本身 就不是 public 的情况, 比如内部类
-                .toArray(FieldInfo[]::new);
-    }
-
-    private static FieldInfo[] filterWritableFields(FieldInfo[] readableFields) {
-        // 因为 ObjectNodeMapper 每种类型的对象只会创建一次, 所以这里 使用 Stream 并没有什么性能问题
-        return Arrays.stream(readableFields).filter(c -> !c.isFinal()).toArray(FieldInfo[]::new);
+        this.defaultConstructor = defaultConstructor;
+        this.readableFields = readableFields;
+        this.writableFields = writableFields;
     }
 
     private static Object getFieldValue(FieldInfo fieldInfo, Object value) throws NodeMappingException {
