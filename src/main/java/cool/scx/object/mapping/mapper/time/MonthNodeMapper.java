@@ -31,7 +31,7 @@ public class MonthNodeMapper implements NodeMapper<Month> {
         if (node.isNull()) {
             return null;
         }
-        //2, 这里我们实际上可以宽松一点, 同时支持数组和字符串
+        //2, 这里我们实际上可以宽松一点, 同时支持数字和字符串
         // 先使用数字解析
         if (node instanceof NumberNode numberNode) {
             try {
