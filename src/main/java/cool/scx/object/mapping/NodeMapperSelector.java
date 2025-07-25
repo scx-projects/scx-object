@@ -1,38 +1,29 @@
 package cool.scx.object.mapping;
 
-import cool.scx.object.mapping.mapper.CollectionNodeMapper;
-import cool.scx.object.mapping.mapper.EnumNodeMapper;
-import cool.scx.object.mapping.mapper.MapNodeMapper;
-import cool.scx.object.mapping.mapper.node.*;
-import cool.scx.object.mapping.mapper.primitive.*;
+import cool.scx.object.mapping.mapper.StringNodeMapper;
+import cool.scx.object.mapping.mapper.UntypedNodeMapper;
 import cool.scx.object.mapping.mapper.math.BigDecimalNodeMapper;
 import cool.scx.object.mapping.mapper.math.BigIntegerNodeMapper;
-import cool.scx.object.mapping.mapper.ObjectArrayNodeMapper;
-import cool.scx.object.mapping.mapper.BeanNodeMapper;
+import cool.scx.object.mapping.mapper.node.*;
+import cool.scx.object.mapping.mapper.other.URINodeMapper;
+import cool.scx.object.mapping.mapper.other.UUIDNodeMapper;
+import cool.scx.object.mapping.mapper.primitive.*;
 import cool.scx.object.mapping.mapper.primitive_array.*;
-import cool.scx.object.mapping.mapper.RecordNodeMapper;
-import cool.scx.object.mapping.mapper.StringNodeMapper;
-import cool.scx.object.mapping.mapper.time.LocalDateNodeMapper;
-import cool.scx.object.mapping.mapper.time.LocalDateTimeNodeMapper;
-import cool.scx.object.mapping.mapper.time.LocalTimeNodeMapper;
-import cool.scx.object.mapping.mapper.UntypedNodeMapper;
+import cool.scx.object.mapping.mapper.time.DateNodeMapper;
+import cool.scx.object.mapping.mapper.time.DurationNodeMapper;
+import cool.scx.object.mapping.mapper.time.TemporalAccessorNodeMapper;
+import cool.scx.object.mapping.mapper_factory.*;
 import cool.scx.object.node.*;
-import cool.scx.reflect.ArrayTypeInfo;
-import cool.scx.reflect.ClassInfo;
-import cool.scx.reflect.PrimitiveTypeInfo;
 import cool.scx.reflect.TypeInfo;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URI;
+import java.time.*;
+import java.util.*;
 
-import static cool.scx.common.constant.DateTimeFormatters.*;
 import static cool.scx.reflect.ScxReflect.typeOf;
+import static java.time.format.DateTimeFormatter.*;
 
 /// NodeMapperSelector (支持动态扩容)
 ///
@@ -42,6 +33,8 @@ public final class NodeMapperSelector {
 
     //同时缓存 Class 和 TypeInfo, 加速查找
     private final Map<Object, NodeMapper<?>> NODE_MAPPER_MAP = new HashMap<>();
+
+    private final List<NodeMapperFactory> NODE_MAPPER_FACTORY_LIST = new ArrayList<>();
 
     public NodeMapperSelector() {
 
@@ -88,9 +81,20 @@ public final class NodeMapperSelector {
 
 
         // 时间
-        registerNodeMapper(LocalDateTime.class, new LocalDateTimeNodeMapper(yyyy_MM_dd_HH_mm_ss));
-        registerNodeMapper(LocalDate.class, new LocalDateNodeMapper(yyyy_MM_dd));
-        registerNodeMapper(LocalTime.class, new LocalTimeNodeMapper(HH_mm_ss));
+        registerNodeMapper(LocalDateTime.class, new TemporalAccessorNodeMapper<>(ISO_LOCAL_DATE_TIME, LocalDateTime::from));
+        registerNodeMapper(LocalDate.class, new TemporalAccessorNodeMapper<>(ISO_LOCAL_DATE, LocalDate::from));
+        registerNodeMapper(LocalTime.class, new TemporalAccessorNodeMapper<>(ISO_LOCAL_TIME, LocalTime::from));
+        registerNodeMapper(OffsetDateTime.class, new TemporalAccessorNodeMapper<>(ISO_OFFSET_DATE_TIME, OffsetDateTime::from));
+        registerNodeMapper(OffsetTime.class, new TemporalAccessorNodeMapper<>(ISO_OFFSET_TIME, OffsetTime::from));
+        registerNodeMapper(ZonedDateTime.class, new TemporalAccessorNodeMapper<>(ISO_ZONED_DATE_TIME, ZonedDateTime::from));
+        registerNodeMapper(Year.class, new TemporalAccessorNodeMapper<>(ofPattern("yyyy"), Year::from));
+        registerNodeMapper(Month.class, new TemporalAccessorNodeMapper<>(ofPattern("MM"), Month::from));
+        registerNodeMapper(MonthDay.class, new TemporalAccessorNodeMapper<>(ofPattern("--MM-dd"), MonthDay::from));
+        registerNodeMapper(YearMonth.class, new TemporalAccessorNodeMapper<>(ofPattern("yyyy-MM"), YearMonth::from));
+        registerNodeMapper(DayOfWeek.class, new TemporalAccessorNodeMapper<>(ofPattern("e"), DayOfWeek::from));
+        registerNodeMapper(Instant.class, new TemporalAccessorNodeMapper<>(ISO_INSTANT, Instant::from));
+        registerNodeMapper(Duration.class, new DurationNodeMapper());
+        registerNodeMapper(Date.class, new DateNodeMapper());
 
 
         // Node 类型
@@ -110,8 +114,23 @@ public final class NodeMapperSelector {
         registerNodeMapper(Node.class, new NodeNodeMapper());
 
 
-        // 特殊类型
+        // Untyped
         registerNodeMapper(Object.class, new UntypedNodeMapper());
+
+
+        // Other
+        registerNodeMapper(UUID.class, new UUIDNodeMapper());
+        registerNodeMapper(URI.class, new URINodeMapper());
+
+
+        // 注意顺序
+        registerNodeMapperFactory(new ObjectArrayNodeMapperFactory());
+        registerNodeMapperFactory(new CollectionNodeMapperFactory());
+        registerNodeMapperFactory(new MapNodeMapperFactory());
+        registerNodeMapperFactory(new BeanNodeMapperFactory());
+        registerNodeMapperFactory(new RecordNodeMapperFactory());
+        registerNodeMapperFactory(new EnumNodeMapperFactory());
+
 
     }
 
@@ -123,6 +142,14 @@ public final class NodeMapperSelector {
         // 同时注册两份 Class 和 TypeInfo, 方便后续根据 Class 快速查找
         NODE_MAPPER_MAP.put(type, typeHandler);
         NODE_MAPPER_MAP.put(typeOf(type), typeHandler);
+    }
+
+    public void registerNodeMapperFactory(NodeMapperFactory nodeMapperFactory) {
+        NODE_MAPPER_FACTORY_LIST.add(nodeMapperFactory);
+    }
+
+    public void registerNodeMapperFactory(NodeMapperFactory nodeMapperFactory, int order) {
+        NODE_MAPPER_FACTORY_LIST.add(order, nodeMapperFactory);
     }
 
     @SuppressWarnings("unchecked")
@@ -142,52 +169,20 @@ public final class NodeMapperSelector {
         if (nodeMapper != null) {
             return nodeMapper;
         }
-        var newNodeMapper = (NodeMapper<T>) this.createNodeMapper(type);
+        var newNodeMapper = (NodeMapper<T>) this.createNodeMapper(typeOf(type));
         registerNodeMapper(type, newNodeMapper);
         return newNodeMapper;
     }
 
-    private NodeMapper<?> createNodeMapper(Object type) throws NodeMappingException {
-        var typeInfo = switch (type) {
-            case TypeInfo t -> t;
-            case Class<?> c -> typeOf(c);
-            // 理论上这是不可达的
-            default -> throw new NodeMappingException("Type 类型异常");
-        };
-        switch (typeInfo) {
-            // 理论上不可能走到这里
-            case PrimitiveTypeInfo _ -> throw new NodeMappingException("不可达异常 !!!");
-            // 这里理论上不可能有 基本类型数组了
-            case ArrayTypeInfo arrayTypeInfo -> {
-                var componentType = arrayTypeInfo.componentType();
-                var componentNodeMapper = findNodeMapper(componentType);
-                return new ObjectArrayNodeMapper(arrayTypeInfo, componentNodeMapper);
-            }
-            case ClassInfo classInfo -> {
-                // 特化处理 Map 和 Collection
-                if (Map.class.isAssignableFrom(typeInfo.rawClass())) {
-                    return new MapNodeMapper(classInfo, this);
-                }
-                if (Collection.class.isAssignableFrom(classInfo.rawClass())) {
-                    return new CollectionNodeMapper(classInfo, this);
-                }
-                // 这里 我们之所以不处理接口和 抽象类原因如下
-                // 在 toNode 的时候 classInfo 是从实例所获取 所以永远不可能是 抽象类 或 接口
-                // 在 fromNode 的时候 抽象类 和 接口 我们根本没办法实例化 所以这里直接抛异常 
-                return switch (classInfo.classKind()) {
-                    case RECORD -> new RecordNodeMapper(classInfo);
-                    case CLASS -> {
-                        if (classInfo.isAbstract()) {
-                            throw new NodeMappingException("无法处理抽象类: " + classInfo);
-                        }
-                        yield new BeanNodeMapper(classInfo);
-                    }
-                    case ENUM -> new EnumNodeMapper<>(classInfo);
-                    case ANNOTATION -> throw new NodeMappingException("无法处理注解: " + classInfo);
-                    case INTERFACE -> throw new NodeMappingException("无法处理接口: " + classInfo);
-                };
+    /// 创建新的 NodeMapper
+    private NodeMapper<?> createNodeMapper(TypeInfo typeInfo) throws NodeMappingException {
+        for (var factory : NODE_MAPPER_FACTORY_LIST) {
+            var nodeMapper = factory.createNodeMapper(typeInfo, this);
+            if (nodeMapper != null) {
+                return nodeMapper;
             }
         }
+        throw new NodeMappingException("No NodeMapper found for type " + typeInfo);
     }
 
 }
