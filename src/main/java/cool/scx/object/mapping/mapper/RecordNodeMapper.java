@@ -52,7 +52,7 @@ public final class RecordNodeMapper implements NodeMapper<Record> {
             if (value == null && context.options().ignoreNullValue()) {
                 continue;
             }
-            objectNode.put(name, context.toNode(name, value));
+            objectNode.put(name, context.toNode(value, name));
         }
         return objectNode;
     }
