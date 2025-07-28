@@ -3,7 +3,7 @@ package cool.scx.object.mapping.mapper_factory;
 import cool.scx.object.mapping.NodeMapper;
 import cool.scx.object.mapping.NodeMapperFactory;
 import cool.scx.object.mapping.NodeMapperSelector;
-import cool.scx.object.mapping.mapper.BeanNodeMapper;
+import cool.scx.object.mapping.mapper.bean.BeanNodeMapper;
 import cool.scx.reflect.*;
 
 import java.util.Arrays;

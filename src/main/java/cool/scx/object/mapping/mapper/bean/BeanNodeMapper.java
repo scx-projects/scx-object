@@ -1,4 +1,4 @@
-package cool.scx.object.mapping.mapper;
+package cool.scx.object.mapping.mapper.bean;
 
 import cool.scx.object.mapping.FromNodeContext;
 import cool.scx.object.mapping.NodeMapper;
@@ -20,6 +20,8 @@ import static cool.scx.object.node.NullNode.NULL;
 /// @author scx567888
 /// @version 0.0.1
 public final class BeanNodeMapper implements NodeMapper<Object> {
+
+    private static final BeanNodeMapperOptions BEAN_NODE_MAPPER_OPTIONS = new BeanNodeMapperOptions();
 
     private final ClassInfo classInfo;
     private final ConstructorInfo defaultConstructor;
@@ -53,12 +55,16 @@ public final class BeanNodeMapper implements NodeMapper<Object> {
 
     @Override
     public Node toNode(Object objectValue, ToNodeContext context) throws NodeMappingException {
+        var options = context.options().getMapperOptions(BeanNodeMapperOptions.class, BEAN_NODE_MAPPER_OPTIONS);
         var objectNode = new ObjectNode();
         for (var fieldInfo : readableFields) {
             var name = fieldInfo.name();
             var value = getFieldValue(fieldInfo, objectValue);
             //处理忽略 null value
-            if (value == null && context.options().ignoreNullValue()) {
+            if (value == null && options.ignoreNullValue()) {
+                continue;
+            }
+            if (options.needIgnore(classInfo, fieldInfo)) {
                 continue;
             }
             objectNode.put(name, context.toNode(value, name));
