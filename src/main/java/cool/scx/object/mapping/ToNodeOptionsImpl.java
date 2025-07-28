@@ -37,7 +37,7 @@ public final class ToNodeOptionsImpl implements ToNodeOptions {
             mapperOptionsMap = new HashMap<>();
         }
         for (var o : optionsList) {
-            mapperOptionsMap.put(o.getClass(), o);    
+            mapperOptionsMap.put(o.getClass(), o);
         }
         return this;
     }
