@@ -32,11 +32,14 @@ public final class ToNodeOptionsImpl implements ToNodeOptions {
     }
 
     @Override
-    public void setMapperOptions(NodeMapperOptions options) {
+    public ToNodeOptionsImpl addMapperOptions(NodeMapperOptions... optionsList) {
         if (mapperOptionsMap == null) {
             mapperOptionsMap = new HashMap<>();
         }
-        mapperOptionsMap.put(options.getClass(), options);
+        for (var o : optionsList) {
+            mapperOptionsMap.put(o.getClass(), o);    
+        }
+        return this;
     }
 
     @SuppressWarnings("unchecked")

@@ -64,6 +64,9 @@ public final class BeanNodeMapper implements NodeMapper<Object> {
             if (value == null && options.ignoreNullValue()) {
                 continue;
             }
+            if (options.needIgnore(classInfo, fieldInfo)) {
+                continue;
+            }
             objectNode.put(name, context.toNode(value, name));
         }
         return objectNode;
