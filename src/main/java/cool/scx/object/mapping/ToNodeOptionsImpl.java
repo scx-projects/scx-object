@@ -1,5 +1,8 @@
 package cool.scx.object.mapping;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /// ToNodeOptionsImpl
 ///
 /// @author scx567888
@@ -7,36 +10,13 @@ package cool.scx.object.mapping;
 public final class ToNodeOptionsImpl implements ToNodeOptions {
 
     // 忽略空值
-    private boolean ignoreNullValue;
-    // 空 key 
-    private String nullKey;
+    private Map<Class<?>, NodeMapperOptions> mapperOptionsMap;
     // 最大嵌套深度
     private int maxNestingDepth;
 
     public ToNodeOptionsImpl() {
-        this.ignoreNullValue = false;
-        this.nullKey = "";
+        this.mapperOptionsMap = null;
         this.maxNestingDepth = 200;
-    }
-
-    @Override
-    public String nullKey() {
-        return nullKey;
-    }
-
-    public ToNodeOptionsImpl nullKey(String nullKey) {
-        this.nullKey = nullKey;
-        return this;
-    }
-
-    @Override
-    public boolean ignoreNullValue() {
-        return ignoreNullValue;
-    }
-
-    public ToNodeOptionsImpl ignoreNullValue(boolean ignoreNullValue) {
-        this.ignoreNullValue = ignoreNullValue;
-        return this;
     }
 
     public int maxNestingDepth() {
@@ -49,6 +29,32 @@ public final class ToNodeOptionsImpl implements ToNodeOptions {
         }
         this.maxNestingDepth = maxNestingDepth;
         return this;
+    }
+
+    @Override
+    public void setMapperOptions(NodeMapperOptions options) {
+        if (mapperOptionsMap == null) {
+            mapperOptionsMap = new HashMap<>();
+        }
+        mapperOptionsMap.put(options.getClass(), options);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends NodeMapperOptions> T getMapperOptions(Class<T> mapNodeMapperOptionsClass) {
+        if (mapperOptionsMap == null) {
+            return null;
+        }
+        return (T) mapperOptionsMap.get(mapNodeMapperOptionsClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends NodeMapperOptions> T getMapperOptions(Class<T> mapNodeMapperOptionsClass, T defaultValue) {
+        if (mapperOptionsMap == null) {
+            return defaultValue;
+        }
+        return (T) mapperOptionsMap.getOrDefault(mapNodeMapperOptionsClass, defaultValue);
     }
 
 }

@@ -55,7 +55,7 @@ public final class BeanNodeMapper implements NodeMapper<Object> {
 
     @Override
     public Node toNode(Object objectValue, ToNodeContext context) throws NodeMappingException {
-        var options = context.options().getOptions(BeanNodeMapperOptions.class, BEAN_NODE_MAPPER_OPTIONS);
+        var options = context.options().getMapperOptions(BeanNodeMapperOptions.class, BEAN_NODE_MAPPER_OPTIONS);
         var objectNode = new ObjectNode();
         for (var fieldInfo : readableFields) {
             var name = fieldInfo.name();

@@ -36,7 +36,7 @@ public final class MapNodeMapper implements NodeMapper<Map<?, ?>> {
 
     @Override
     public Node toNode(Map<?, ?> mapValue, ToNodeContext context) throws NodeMappingException {
-        var options = context.options().getOptions(MapNodeMapperOptions.class, MAP_NODE_MAPPER_OPTIONS);
+        var options = context.options().getMapperOptions(MapNodeMapperOptions.class, MAP_NODE_MAPPER_OPTIONS);
         var objectNode = new ObjectNode(mapValue.size());
         for (var e : mapValue.entrySet()) {
             var key = e.getKey();

@@ -46,7 +46,7 @@ public final class RecordNodeMapper implements NodeMapper<Record> {
 
     @Override
     public Node toNode(Record recordValue, ToNodeContext context) throws NodeMappingException {
-        var options = context.options().getOptions(RecordNodeMapperOptions.class, RECORD_NODE_MAPPER_OPTIONS);
+        var options = context.options().getMapperOptions(RecordNodeMapperOptions.class, RECORD_NODE_MAPPER_OPTIONS);
         var objectNode = new ObjectNode();
         for (var recordComponent : recordComponents) {
             var name = recordComponent.name();

@@ -3,9 +3,10 @@ package cool.scx.object.mapping;
 public interface ToNodeOptions {
 
     /// 是否忽略 null 值, 多用于 Map 和 Object
-    boolean ignoreNullValue();
+    void setMapperOptions(NodeMapperOptions options);
 
-    /// null 时 对应的 key
-    String nullKey();
+    <T extends NodeMapperOptions> T getMapperOptions(Class<T> mapNodeMapperOptionsClass);
+
+    <T extends NodeMapperOptions> T getMapperOptions(Class<T> mapNodeMapperOptionsClass, T defaultValue);
 
 }
