@@ -1,4 +1,4 @@
-package cool.scx.object.mapping.mapper;
+package cool.scx.object.mapping.mapper.record;
 
 import cool.scx.object.mapping.FromNodeContext;
 import cool.scx.object.mapping.NodeMapper;
@@ -20,6 +20,8 @@ import static cool.scx.object.node.NullNode.NULL;
 /// @author scx567888
 /// @version 0.0.1
 public final class RecordNodeMapper implements NodeMapper<Record> {
+
+    private static final RecordNodeMapperOptions RECORD_NODE_MAPPER_OPTIONS = new RecordNodeMapperOptions();
 
     private final ClassInfo classInfo;
     private final RecordComponentInfo[] recordComponents;
@@ -44,12 +46,13 @@ public final class RecordNodeMapper implements NodeMapper<Record> {
 
     @Override
     public Node toNode(Record recordValue, ToNodeContext context) throws NodeMappingException {
+        var options = context.options().getOptions(RecordNodeMapperOptions.class, RECORD_NODE_MAPPER_OPTIONS);
         var objectNode = new ObjectNode();
         for (var recordComponent : recordComponents) {
             var name = recordComponent.name();
             var value = getComponentValue(recordComponent, recordValue);
             //处理忽略 null value
-            if (value == null && context.options().ignoreNullValue()) {
+            if (value == null && options.ignoreNullValue()) {
                 continue;
             }
             objectNode.put(name, context.toNode(value, name));

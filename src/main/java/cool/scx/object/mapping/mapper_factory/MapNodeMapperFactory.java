@@ -4,7 +4,7 @@ import cool.scx.object.mapping.NodeMapper;
 import cool.scx.object.mapping.NodeMapperFactory;
 import cool.scx.object.mapping.NodeMapperSelector;
 import cool.scx.object.mapping.NodeMappingException;
-import cool.scx.object.mapping.mapper.MapNodeMapper;
+import cool.scx.object.mapping.mapper.map.MapNodeMapper;
 import cool.scx.reflect.ClassInfo;
 import cool.scx.reflect.TypeInfo;
 
