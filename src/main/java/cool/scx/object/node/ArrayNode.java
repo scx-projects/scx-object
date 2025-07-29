@@ -52,6 +52,10 @@ public final class ArrayNode implements Node, Iterable<Node> {
     public int size() {
         return this._children.size();
     }
+    
+    public boolean isEmpty() {
+        return this._children.isEmpty();
+    }
 
     @Override
     public Iterator<Node> iterator() {
