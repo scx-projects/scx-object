@@ -46,7 +46,7 @@ import static cool.scx.object.parser.AutoCloseableXMLStreamReader.createXMLStrea
 ///     存在多个同名属性 -> 合并属性为 ArrayNode
 ///
 /// 11, `<a name="">  <b> 1 2 3 </b>   </a>` -> `{"b": " 1 2 3 ", "name": "" }`
-///     所有的纯空白文本节点视为不存在, 但有内容则保留原始文本
+///     所有的纯空白文本节点视为不存在, 但有内容则保留原始文本, 属性永远保留原始文本
 public class XmlNodeParser {
 
     private final XMLInputFactory xmlFactory;
@@ -89,33 +89,37 @@ public class XmlNodeParser {
             elements.put(attributeName, new TextNode(attributeValue));
         }
 
-        // 检查该元素是否是一个空元素
-        boolean hasText = false;
+        int lastEventType = -1;
 
+        boolean isSelfClosing = true;
 
-        while (reader.next() != XMLStreamConstants.END_ELEMENT) {
-
-            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+        while (true) {
+            var event = reader.getEventType();
+            var eventType = reader.next();
+            if (eventType == XMLStreamConstants.START_ELEMENT) {
+                isSelfClosing=false;
                 var localName = reader.getLocalName();
                 var childNode = parseElement(reader);
                 elements.put(localName, childNode);
-            } else if (reader.getEventType() == XMLStreamConstants.CHARACTERS) {
-                hasText = true;
+            } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                isSelfClosing=false;
                 var text = reader.getText();
-                // 移除空白字符
+                // 忽略空白字符
                 if (!text.isBlank()) {
                     texts.add(new TextNode(text));
                 }
+            } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                break;
             }
+            lastEventType = eventType;
         }
+
 
         // 没有任何子元素
         if (elements.isEmpty()) {
             // 如果文本也是空的
             if (texts.isEmpty()) {
-                if (hasText) {
-
-                }
+              
                 return NullNode.NULL;
             }
             // 如果只有一个文本节点
@@ -141,7 +145,7 @@ public class XmlNodeParser {
     // 测试
     public static void main(String[] args) throws JsonProcessingException {
         var xml = """
-                <book a="abc">123<b> 567</b><c> </c> </book>
+                <book/>
                 """;
 
         var s = new XmlNodeParser(XMLInputFactory.newFactory());
