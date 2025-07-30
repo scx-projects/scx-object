@@ -1,16 +1,15 @@
 package cool.scx.object.parser;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cool.scx.object.node.*;
+import org.codehaus.stax2.XMLInputFactory2;
+import org.codehaus.stax2.XMLStreamReader2;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
+import java.io.File;
+import java.io.StringReader;
 
-import static cool.scx.object.parser.AutoCloseableXMLStreamReader.createXMLStreamReader;
+import static cool.scx.object.parser.AutoCloseableXMLStreamReader.wrap;
 
 
 /// ### 解析规则:
@@ -49,78 +48,131 @@ import static cool.scx.object.parser.AutoCloseableXMLStreamReader.createXMLStrea
 ///     所有的纯空白文本节点视为不存在, 但有内容则保留原始文本, 属性永远保留原始文本
 public class XmlNodeParser {
 
-    private final XMLInputFactory xmlFactory;
+    // 这里我们使用 XMLInputFactory2, 因为 XMLInputFactory 功能过于羸弱 
+    private final XMLInputFactory2 xmlFactory;
+    private final NodeParserOptions options;
 
-    public XmlNodeParser(XMLInputFactory xmlFactory) {
+    public XmlNodeParser(XMLInputFactory2 xmlFactory, NodeParserOptions options) {
         this.xmlFactory = xmlFactory;
+        this.options = options;
     }
 
     public Node parse(String xml) throws NodeParseException {
-        try (var r = createXMLStreamReader(xmlFactory, xml)) {
-            var xmlStreamReader = r.reader();
-            return parseNode(xmlStreamReader);
+        try (var xmlStreamReader = wrap(xmlFactory.createXMLStreamReader(new StringReader(xml)))) {
+            return parse(xmlStreamReader.reader());
         } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new NodeParseException(e);
         }
     }
 
-    private Node parseNode(XMLStreamReader reader) throws XMLStreamException {
-        // 这里因为 reader 一定是一个新创建的,
-        // 也就是 reader.getEventType() == START_DOCUMENT,
-        // 所以我们直接移动到下一个有效节点
-        reader.next();
-        return parseElement(reader);
+    public Node parse(File file) throws NodeParseException {
+        try (var xmlStreamReader = wrap(xmlFactory.createXMLStreamReader(file))) {
+            return parse(xmlStreamReader.reader());
+        } catch (XMLStreamException e) {
+            throw new NodeParseException(e);
+        }
     }
 
-    private Node parseElement(XMLStreamReader reader) throws XMLStreamException {
+    private Node parse(XMLStreamReader2 reader) throws XMLStreamException {
+        int eventType = reader.getEventType();
+        if (eventType == XMLStreamConstants.START_DOCUMENT) {
+            reader.next();
+        } else {
+            throw new XMLStreamException("Expected START_DOCUMENT, got " + eventType);
+        }
+        return parseNode(reader);
+    }
+
+    private Node parseNode(XMLStreamReader2 reader) throws XMLStreamException {
+        int eventType = reader.getEventType();
+        if (eventType == XMLStreamConstants.START_ELEMENT) {
+            return parseElement(reader);
+        } else {
+            throw new XMLStreamException("Expected START_ELEMENT, got " + eventType);
+        }
+    }
+
+    private Node parseElement(XMLStreamReader2 reader) throws XMLStreamException {
         // 记录出现过的子元素和属性
         var elements = new ObjectNode();
+
+        // 1, 处理当前元素的属性
+        int attributeCount = reader.getAttributeCount();
+        for (int i = 0; i < attributeCount; i = i + 1) {
+            var name = reader.getAttributeLocalName(i);
+            var value = reader.getAttributeValue(i);
+            // 可能存在重名元素
+            var oldChildNode = elements.get(name);
+            if (oldChildNode == null) {
+                elements.put(name, new TextNode(value));
+                continue;
+            }
+            //我们默认尝试转换成 数组 
+            if (oldChildNode instanceof ArrayNode arrayNode) {
+                arrayNode.add(new TextNode(value));
+            } else {
+                var arrayNode = new ArrayNode();
+                arrayNode.add(oldChildNode);
+                arrayNode.add(new TextNode(value));
+                elements.put(name, arrayNode);
+            }
+        }
+
+        // 2, 判断是否是自闭合标签 
+        var emptyElement = reader.isEmptyElement();
+        // 自闭合标签 无需处理内部元素 直接返回
+        if (emptyElement) {
+            // 这里别忘了移动
+            reader.next();
+            if (elements.isEmpty()) {
+                return NullNode.NULL;
+            } else {
+                return elements;
+            }
+        }
+
         // 记录出现过的文本
         var texts = new ArrayNode();
 
-        // 处理当前元素的属性
-        int attributeCount = reader.getAttributeCount();
-        for (int i = 0; i < attributeCount; i = i + 1) {
-            var attributeName = reader.getAttributeLocalName(i); // 属性名称
-            var attributeValue = reader.getAttributeValue(i);    // 属性值
-            // 存储属性，使用属性名称作为 key
-            elements.put(attributeName, new TextNode(attributeValue));
-        }
-
-        int lastEventType = -1;
-
-        boolean isSelfClosing = true;
-
         while (true) {
-            var event = reader.getEventType();
             var eventType = reader.next();
+            // 如果又遇到了一个 ELEMENT 进行递归解析
             if (eventType == XMLStreamConstants.START_ELEMENT) {
-                isSelfClosing=false;
-                var localName = reader.getLocalName();
-                var childNode = parseElement(reader);
-                elements.put(localName, childNode);
+                var name = reader.getLocalName();
+                var element = parseElement(reader);
+                // 可能存在重名元素
+                var oldChildNode = elements.get(name);
+                if (oldChildNode == null) {
+                    elements.put(name, element);
+                    continue;
+                }
+                //我们默认尝试转换成 数组 
+                if (oldChildNode instanceof ArrayNode arrayNode) {
+                    arrayNode.add(element);
+                } else {
+                    var arrayNode = new ArrayNode();
+                    arrayNode.add(oldChildNode);
+                    arrayNode.add(element);
+                    elements.put(name, arrayNode);
+                }
             } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                isSelfClosing=false;
+                // 遇到了文本 进行存储
                 var text = reader.getText();
                 // 忽略空白字符
                 if (!text.isBlank()) {
                     texts.add(new TextNode(text));
                 }
             } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                // 跳出循环
                 break;
             }
-            lastEventType = eventType;
         }
-
 
         // 没有任何子元素
         if (elements.isEmpty()) {
             // 如果文本也是空的
             if (texts.isEmpty()) {
-              
-                return NullNode.NULL;
+                return new TextNode("");
             }
             // 如果只有一个文本节点
             if (texts.size() == 1) {
@@ -129,37 +181,16 @@ public class XmlNodeParser {
             // 有很多文本节点 (应该不会出现这种情况)
             return texts;
         }
-        // 如果文本也是空的
-        if (texts.isEmpty()) {
-            return elements;
-        }
         // 如果只有一个文本节点
         if (texts.size() == 1) {
             elements.put("", texts.get(0));
             return elements;
+        } else if (texts.size() > 1) {
+            // 如果又很多文本节点 以数组形式添加
+            elements.put("", texts);
         }
-        elements.put("", texts);
+
         return elements;
     }
-
-    // 测试
-    public static void main(String[] args) throws JsonProcessingException {
-        var xml = """
-                <book/>
-                """;
-
-        var s = new XmlNodeParser(XMLInputFactory.newFactory());
-        Node parse = s.parse(xml);
-
-        var x = new XmlMapper();
-
-        var e = x.readTree(xml);
-
-        String s1 = x.writeValueAsString(e);
-
-        System.out.println(e.toString());
-
-    }
-
 
 }
