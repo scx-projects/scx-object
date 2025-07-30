@@ -44,6 +44,9 @@ import static cool.scx.object.parser.AutoCloseableXMLStreamReader.createXMLStrea
 ///
 /// 10, `<a name="jack" name="rose"></a>` -> `{"name": ["jack", "rose"]}`
 ///     存在多个同名属性 -> 合并属性为 ArrayNode
+///
+/// 11, `<a name="">  <b> 1 2 3 </b>   </a>` -> `{"b": " 1 2 3 ", "name": "" }`
+///     所有的纯空白文本节点视为不存在, 但有内容则保留原始文本
 public class XmlNodeParser {
 
     private final XMLInputFactory xmlFactory;
