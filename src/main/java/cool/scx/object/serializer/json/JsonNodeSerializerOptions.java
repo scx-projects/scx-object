@@ -1,6 +1,6 @@
 package cool.scx.object.serializer.json;
 
-/// NodeSerializerOptions
+/// JsonNodeSerializerOptions
 ///
 /// @author scx567888
 /// @version 0.0.1
