@@ -6,7 +6,7 @@ public class XmlNodeParserOptions {
     private int maxNestingDepth;
     // 最大子元素数量 (同时作用于属性和子元素)
     private int maxChildCount;
-    // 最大字符串长度
+    // 最大字符串长度 (同时作用于属性值和文本)
     private int maxStringLength;
 
     public XmlNodeParserOptions() {
