@@ -32,6 +32,7 @@ public final class JsonNodeParser implements NodeParser {
                 .build());
     }
 
+    @Override
     public Node parse(String json) throws NodeParseException {
         try {
             return parseAndClose(jsonFactory.createParser(json));
@@ -43,6 +44,7 @@ public final class JsonNodeParser implements NodeParser {
         }
     }
 
+    @Override
     public Node parse(File file) throws NodeParseException, IOException {
         try {
             return parseAndClose(jsonFactory.createParser(file));

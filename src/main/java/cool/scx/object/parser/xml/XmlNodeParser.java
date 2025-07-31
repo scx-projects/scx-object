@@ -1,19 +1,19 @@
 package cool.scx.object.parser.xml;
 
+import com.ctc.wstx.stax.WstxInputFactory;
 import cool.scx.object.node.*;
 import cool.scx.object.parser.NodeParseException;
 import cool.scx.object.parser.NodeParser;
-import cool.scx.object.parser.json.JsonNodeParserOptions;
-import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.StringReader;
 
+import static com.ctc.wstx.api.WstxInputProperties.*;
 import static cool.scx.object.parser.xml.AutoCloseableXMLStreamReader.wrap;
-
 
 /// ### 解析规则:
 ///
@@ -51,13 +51,21 @@ import static cool.scx.object.parser.xml.AutoCloseableXMLStreamReader.wrap;
 ///     所有的纯空白文本节点视为不存在, 但有内容则保留原始文本, 属性永远保留原始文本
 public class XmlNodeParser implements NodeParser {
 
-    // 这里我们使用 XMLInputFactory2, 因为 XMLInputFactory 功能过于羸弱 
-    private final XMLInputFactory2 xmlFactory;
-    private final JsonNodeParserOptions options;
+    // 这里我们使用 WstxInputFactory, 因为默认 XMLInputFactory 功能过于羸弱 
+    private final WstxInputFactory xmlFactory;
+    private final XmlNodeParserOptions options;
 
-    public XmlNodeParser(XMLInputFactory2 xmlFactory, JsonNodeParserOptions options) {
+    public XmlNodeParser(WstxInputFactory xmlFactory, XmlNodeParserOptions options) {
         this.xmlFactory = xmlFactory;
         this.options = options;
+        //有很多的 安全限制 Woodstox  已经覆盖了 我们直接使用
+        this.xmlFactory.setProperty(P_MAX_ELEMENT_DEPTH, options.maxNestingDepth());
+        this.xmlFactory.setProperty(P_MAX_TEXT_LENGTH, options.maxStringLength());
+        this.xmlFactory.setProperty(P_MAX_ATTRIBUTE_SIZE, options.maxStringLength());
+        this.xmlFactory.setProperty(P_MAX_CHILDREN_PER_ELEMENT, options.maxChildCount());
+        this.xmlFactory.setProperty(P_MAX_ATTRIBUTES_PER_ELEMENT, options.maxChildCount());
+        this.xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        this.xmlFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
     }
 
     @Override
@@ -79,22 +87,24 @@ public class XmlNodeParser implements NodeParser {
     }
 
     private Node parse(XMLStreamReader2 reader) throws XMLStreamException {
-        int eventType = reader.getEventType();
-        if (eventType == XMLStreamConstants.START_DOCUMENT) {
+        // 1, 循环直到找到第一个元素起始 
+        while (true) {
+            int eventType = reader.getEventType();
+            if (eventType == XMLStreamConstants.START_ELEMENT) {
+                break;
+            }
             reader.next();
-        } else {
-            throw new XMLStreamException("Expected START_DOCUMENT, got " + eventType);
         }
-        return parseNode(reader);
-    }
+        // 2, 解析
+        var node = parseElement(reader);
 
-    private Node parseNode(XMLStreamReader2 reader) throws XMLStreamException {
-        int eventType = reader.getEventType();
-        if (eventType == XMLStreamConstants.START_ELEMENT) {
-            return parseElement(reader);
-        } else {
-            throw new XMLStreamException("Expected START_ELEMENT, got " + eventType);
+        // 3, 验证是否存在后续多余内容
+        while (reader.hasNext()) {
+            // 非法内容 Woodstox 会为直接抛异常 无需我们处理
+            reader.next();
         }
+
+        return node;
     }
 
     private Node parseElement(XMLStreamReader2 reader) throws XMLStreamException {
@@ -171,6 +181,7 @@ public class XmlNodeParser implements NodeParser {
                 // 跳出循环
                 break;
             }
+            // 其余的 我们全部 当做不存在, 比如注释之类
         }
 
         // 没有任何子元素

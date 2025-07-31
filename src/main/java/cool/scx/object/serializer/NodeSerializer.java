@@ -4,6 +4,6 @@ import cool.scx.object.node.Node;
 
 public interface NodeSerializer {
 
-    String serializeAsString(Node node);
+    String serializeAsString(Node node) throws NodeSerializeException;
 
 }
