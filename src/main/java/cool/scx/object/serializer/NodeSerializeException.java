@@ -10,4 +10,8 @@ public class NodeSerializeException extends RuntimeException {
         super(message, cause);
     }
 
+    public NodeSerializeException(String message) {
+        super(message);
+    }
+    
 }

@@ -1,9 +1,9 @@
 package cool.scx.object.serializer.xml;
 
+import com.ctc.wstx.stax.WstxOutputFactory;
 import cool.scx.object.node.*;
 import cool.scx.object.serializer.NodeSerializeException;
 import cool.scx.object.serializer.NodeSerializer;
-import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import javax.xml.stream.XMLStreamException;
@@ -38,16 +38,12 @@ import static cool.scx.object.serializer.xml.AutoCloseableXMLStreamWriter.wrap;
 ///    key 为 "", 直接解包
 public final class XmlNodeSerializer implements NodeSerializer {
 
-    private final XMLOutputFactory2 xmlFactory;
+    private final WstxOutputFactory xmlFactory;
     private final XmlNodeSerializerOptions options;
 
-    public XmlNodeSerializer(XMLOutputFactory2 xmlFactory, XmlNodeSerializerOptions options) {
+    public XmlNodeSerializer(WstxOutputFactory xmlFactory, XmlNodeSerializerOptions options) {
         this.xmlFactory = xmlFactory;
         this.options = options;
-        //有很多的 安全限制 jackson 已经覆盖了 我们直接使用
-//        this.xmlFactory.setStreamWriteConstraints(StreamWriteConstraints.builder()
-//                .maxNestingDepth(options.maxNestingDepth())
-//                .build());
     }
 
     @Override
@@ -64,10 +60,13 @@ public final class XmlNodeSerializer implements NodeSerializer {
     private void serialize(XMLStreamWriter2 writer2, Node node) throws XMLStreamException {
         // 顶级数组需要特殊处理
         var isRootArray = node instanceof ArrayNode;
-        writeNode(writer2, node, "root", isRootArray);
+        writeNode(writer2, node, options.rootName(), isRootArray, 1);
     }
 
-    private void writeNode(XMLStreamWriter2 writer2, Node node, String key, boolean inArray) throws XMLStreamException {
+    private void writeNode(XMLStreamWriter2 writer2, Node node, String key, boolean inArray, int currentDepth) throws XMLStreamException {
+        if (currentDepth > options.maxNestingDepth()) {
+            throw new NodeSerializeException("Nesting depth exceeds limit: " + options.maxNestingDepth());
+        }
         switch (node) {
             case NullNode _ -> {
                 // 如果根节点本身就是 null, 直接返回自闭合标签
@@ -86,7 +85,7 @@ public final class XmlNodeSerializer implements NodeSerializer {
             case ObjectNode objectNode -> {
                 writer2.writeStartElement(key);
                 for (var e : objectNode) {
-                    writeNode(writer2, e.getValue(), e.getKey(), false);
+                    writeNode(writer2, e.getValue(), e.getKey(), false, currentDepth + 1);
                 }
                 writer2.writeEndElement();
             }
@@ -94,12 +93,12 @@ public final class XmlNodeSerializer implements NodeSerializer {
                 if (inArray) {
                     writer2.writeStartElement(key);
                     for (var e : arrayNode) {
-                        writeNode(writer2, e, "item", true);
+                        writeNode(writer2, e, options.itemName(), true, currentDepth + 1);
                     }
                     writer2.writeEndElement();
                 } else {
                     for (var e : arrayNode) {
-                        writeNode(writer2, e, key, true);
+                        writeNode(writer2, e, key, true, currentDepth + 1);
                     }
                 }
             }
