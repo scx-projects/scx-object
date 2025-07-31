@@ -1,6 +1,6 @@
 package cool.scx.object.parser.json;
 
-/// NodeParserOptions
+/// JsonNodeParserOptions
 ///
 /// @author scx567888
 /// @version 0.0.1
