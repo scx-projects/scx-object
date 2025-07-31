@@ -1,0 +1,22 @@
+package cool.scx.object.serializer;
+
+import org.codehaus.stax2.XMLStreamReader2;
+import org.codehaus.stax2.XMLStreamWriter2;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+record AutoCloseableXMLStreamWriter(XMLStreamWriter2 writer) implements AutoCloseable {
+
+    @Override
+    public void close() throws XMLStreamException {
+        writer.closeCompletely();
+    }
+
+    public static AutoCloseableXMLStreamWriter wrap(XMLStreamWriter writer) {
+        // 这里我们保证 XMLStreamReader 一定是 XMLStreamReader2
+        return new AutoCloseableXMLStreamWriter((XMLStreamWriter2) writer);
+    }
+
+}
