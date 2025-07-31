@@ -1,4 +1,4 @@
-package cool.scx.object.parser;
+package cool.scx.object.parser.xml;
 
 import org.codehaus.stax2.XMLStreamReader2;
 

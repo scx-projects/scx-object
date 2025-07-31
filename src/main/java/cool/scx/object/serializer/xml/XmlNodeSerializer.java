@@ -1,11 +1,12 @@
-package cool.scx.object.serializer;
+package cool.scx.object.serializer.xml;
 
 import cool.scx.object.node.*;
+import cool.scx.object.serializer.NodeSerializeException;
+import cool.scx.object.serializer.XmlNodeSerializerOptions;
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
 import java.io.StringWriter;
 
 import static cool.scx.object.serializer.AutoCloseableXMLStreamWriter.wrap;
@@ -52,28 +53,27 @@ public final class XmlNodeSerializer {
     public String serializeAsString(Node node) throws NodeSerializeException {
         var writer = new StringWriter();
         try (var xmlStreamWriter = wrap(xmlFactory.createXMLStreamWriter(writer))) {
-            serializeAndClose(xmlStreamWriter.writer(), node);
+            serialize(xmlStreamWriter.writer(), node);
         } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return writer.toString();
     }
 
-    private void serializeAndClose(XMLStreamWriter2 writer2, Node node) throws XMLStreamException, IOException {   // 顶级数组需要特殊处理
+    private void serialize(XMLStreamWriter2 writer2, Node node) throws XMLStreamException {
         // 顶级数组需要特殊处理
         var isRootArray = node instanceof ArrayNode;
         writeNode(writer2, node, "root", isRootArray);
     }
 
     private void writeNode(XMLStreamWriter2 writer2, Node node, String key, boolean inArray) throws XMLStreamException {
-        // 如果根节点本身就是 null, 直接返回自闭合标签
         switch (node) {
             case NullNode _ -> {
+                // 如果根节点本身就是 null, 直接返回自闭合标签
                 writer2.writeEmptyElement(key);
             }
             case ValueNode valueNode -> {
+                // "", 直接解包
                 if (key.isEmpty()) {
                     writer2.writeCharacters(valueNode.toString());
                 } else {

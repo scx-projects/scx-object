@@ -1,6 +1,9 @@
-package cool.scx.object.parser;
+package cool.scx.object.parser.xml;
 
 import cool.scx.object.node.*;
+import cool.scx.object.parser.NodeParseException;
+import cool.scx.object.parser.NodeParser;
+import cool.scx.object.parser.NodeParserOptions;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
 
@@ -46,7 +49,7 @@ import static cool.scx.object.parser.AutoCloseableXMLStreamReader.wrap;
 ///
 /// 11, `<a name="">  <b> 1 2 3 </b>   </a>` -> `{"b": " 1 2 3 ", "name": "" }`
 ///     所有的纯空白文本节点视为不存在, 但有内容则保留原始文本, 属性永远保留原始文本
-public class XmlNodeParser {
+public class XmlNodeParser implements NodeParser {
 
     // 这里我们使用 XMLInputFactory2, 因为 XMLInputFactory 功能过于羸弱 
     private final XMLInputFactory2 xmlFactory;

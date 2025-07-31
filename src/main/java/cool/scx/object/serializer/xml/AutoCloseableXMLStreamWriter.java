@@ -1,4 +1,4 @@
-package cool.scx.object.serializer;
+package cool.scx.object.serializer.xml;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
