@@ -41,7 +41,7 @@ public final class ObjectNode implements Node, Iterable<Map.Entry<String, Node>>
     public int size() {
         return _children.size();
     }
-    
+
     public boolean isEmpty() {
         return _children.isEmpty();
     }
