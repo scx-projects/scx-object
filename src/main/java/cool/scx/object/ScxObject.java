@@ -10,6 +10,7 @@ import cool.scx.object.parser.NodeParser;
 import cool.scx.object.parser.json.JsonNodeParser;
 import cool.scx.object.parser.json.JsonNodeParserOptions;
 import cool.scx.object.parser.xml.XmlNodeParser;
+import cool.scx.object.parser.xml.XmlNodeParserOptions;
 import cool.scx.object.serializer.NodeSerializeException;
 import cool.scx.object.serializer.NodeSerializer;
 import cool.scx.object.serializer.json.JsonNodeSerializer;
@@ -23,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static cool.scx.object.parser.json.DuplicateFieldPolicy.COVER;
-import static cool.scx.object.parser.json.DuplicateFieldPolicy.MERGE;
 import static cool.scx.reflect.ScxReflect.typeOf;
 
 /// ScxObject
@@ -41,7 +41,7 @@ public final class ScxObject {
     static {
         var jsonFactory = new JsonFactory();
         JSON_PARSER = new JsonNodeParser(jsonFactory, new JsonNodeParserOptions().duplicateFieldPolicy(COVER));
-        XML_PARSER = new XmlNodeParser(new WstxInputFactory(), new JsonNodeParserOptions().duplicateFieldPolicy(MERGE));
+        XML_PARSER = new XmlNodeParser(new WstxInputFactory(), new XmlNodeParserOptions());
         JSON_SERIALIZER = new JsonNodeSerializer(jsonFactory, new JsonNodeSerializerOptions());
         XML_SERIALIZER = new XmlNodeSerializer(new WstxOutputFactory(), new XmlNodeSerializerOptions());
         NODE_MAPPER_SELECTOR = new NodeMapperSelector();

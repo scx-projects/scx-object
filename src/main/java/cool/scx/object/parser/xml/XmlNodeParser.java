@@ -1,19 +1,19 @@
 package cool.scx.object.parser.xml;
 
+import com.ctc.wstx.stax.WstxInputFactory;
 import cool.scx.object.node.*;
 import cool.scx.object.parser.NodeParseException;
 import cool.scx.object.parser.NodeParser;
-import cool.scx.object.parser.json.JsonNodeParserOptions;
-import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.StringReader;
 
+import static com.ctc.wstx.api.WstxInputProperties.*;
 import static cool.scx.object.parser.xml.AutoCloseableXMLStreamReader.wrap;
-
 
 /// ### 解析规则:
 ///
@@ -51,13 +51,21 @@ import static cool.scx.object.parser.xml.AutoCloseableXMLStreamReader.wrap;
 ///     所有的纯空白文本节点视为不存在, 但有内容则保留原始文本, 属性永远保留原始文本
 public class XmlNodeParser implements NodeParser {
 
-    // 这里我们使用 XMLInputFactory2, 因为 XMLInputFactory 功能过于羸弱 
-    private final XMLInputFactory2 xmlFactory;
-    private final JsonNodeParserOptions options;
+    // 这里我们使用 WstxInputFactory, 因为默认 XMLInputFactory 功能过于羸弱 
+    private final WstxInputFactory xmlFactory;
+    private final XmlNodeParserOptions options;
 
-    public XmlNodeParser(XMLInputFactory2 xmlFactory, JsonNodeParserOptions options) {
+    public XmlNodeParser(WstxInputFactory xmlFactory, XmlNodeParserOptions options) {
         this.xmlFactory = xmlFactory;
         this.options = options;
+        //有很多的 安全限制 Woodstox  已经覆盖了 我们直接使用
+        this.xmlFactory.setProperty(P_MAX_ELEMENT_DEPTH, options.maxNestingDepth());
+        this.xmlFactory.setProperty(P_MAX_TEXT_LENGTH, options.maxStringLength());
+        this.xmlFactory.setProperty(P_MAX_ATTRIBUTE_SIZE, options.maxStringLength());
+        this.xmlFactory.setProperty(P_MAX_CHILDREN_PER_ELEMENT, options.maxChildCount());
+        this.xmlFactory.setProperty(P_MAX_ATTRIBUTES_PER_ELEMENT, options.maxChildCount());
+        this.xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        this.xmlFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
     }
 
     @Override
@@ -85,11 +93,7 @@ public class XmlNodeParser implements NodeParser {
         } else {
             throw new XMLStreamException("Expected START_DOCUMENT, got " + eventType);
         }
-        return parseNode(reader);
-    }
-
-    private Node parseNode(XMLStreamReader2 reader) throws XMLStreamException {
-        int eventType = reader.getEventType();
+        eventType = reader.getEventType();
         if (eventType == XMLStreamConstants.START_ELEMENT) {
             return parseElement(reader);
         } else {
