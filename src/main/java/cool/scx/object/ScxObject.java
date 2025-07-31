@@ -1,21 +1,29 @@
 package cool.scx.object;
 
+import com.ctc.wstx.stax.WstxInputFactory;
+import com.ctc.wstx.stax.WstxOutputFactory;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import cool.scx.object.mapping.*;
 import cool.scx.object.node.Node;
 import cool.scx.object.parser.NodeParseException;
 import cool.scx.object.parser.NodeParser;
-import cool.scx.object.parser.NodeParserOptions;
-import cool.scx.object.serializer.*;
+import cool.scx.object.parser.json.JsonNodeParser;
+import cool.scx.object.parser.json.JsonNodeParserOptions;
+import cool.scx.object.parser.xml.XmlNodeParser;
+import cool.scx.object.serializer.NodeSerializeException;
+import cool.scx.object.serializer.NodeSerializer;
+import cool.scx.object.serializer.json.JsonNodeSerializer;
+import cool.scx.object.serializer.json.JsonNodeSerializerOptions;
+import cool.scx.object.serializer.xml.XmlNodeSerializer;
+import cool.scx.object.serializer.xml.XmlNodeSerializerOptions;
 import cool.scx.reflect.TypeInfo;
 import cool.scx.reflect.TypeReference;
 
 import java.io.File;
 import java.io.IOException;
 
-import static cool.scx.object.parser.DuplicateFieldPolicy.COVER;
-import static cool.scx.object.parser.DuplicateFieldPolicy.MERGE;
+import static cool.scx.object.parser.json.DuplicateFieldPolicy.COVER;
+import static cool.scx.object.parser.json.DuplicateFieldPolicy.MERGE;
 import static cool.scx.reflect.ScxReflect.typeOf;
 
 /// ScxObject
@@ -27,16 +35,15 @@ public final class ScxObject {
     private static final NodeParser JSON_PARSER;
     private static final NodeParser XML_PARSER;
     private static final NodeSerializer JSON_SERIALIZER;
-    private static final XmlNodeSerializer XML_SERIALIZER;
+    private static final NodeSerializer XML_SERIALIZER;
     private static final NodeMapperSelector NODE_MAPPER_SELECTOR;
 
     static {
         var jsonFactory = new JsonFactory();
-        var xmlFactory = new XmlFactory();
-        JSON_PARSER = new NodeParser(jsonFactory, new NodeParserOptions().duplicateFieldPolicy(COVER));
-        XML_PARSER = new NodeParser(xmlFactory, new NodeParserOptions().duplicateFieldPolicy(MERGE));
-        JSON_SERIALIZER = new NodeSerializer(jsonFactory, new NodeSerializerOptions());
-        XML_SERIALIZER = new XmlNodeSerializer(xmlFactory, new XmlNodeSerializerOptions());
+        JSON_PARSER = new JsonNodeParser(jsonFactory, new JsonNodeParserOptions().duplicateFieldPolicy(COVER));
+        XML_PARSER = new XmlNodeParser(new WstxInputFactory(), new JsonNodeParserOptions().duplicateFieldPolicy(MERGE));
+        JSON_SERIALIZER = new JsonNodeSerializer(jsonFactory, new JsonNodeSerializerOptions());
+        XML_SERIALIZER = new XmlNodeSerializer(new WstxOutputFactory(), new XmlNodeSerializerOptions());
         NODE_MAPPER_SELECTOR = new NodeMapperSelector();
     }
 
