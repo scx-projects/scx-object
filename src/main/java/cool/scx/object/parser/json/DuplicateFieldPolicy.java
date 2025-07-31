@@ -1,4 +1,4 @@
-package cool.scx.object.parser;
+package cool.scx.object.parser.json;
 
 /// 重复 field 策略
 public enum DuplicateFieldPolicy {
