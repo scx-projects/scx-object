@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.StreamWriteConstraints;
 import cool.scx.object.node.*;
 import cool.scx.object.serializer.NodeSerializeException;
-import cool.scx.object.serializer.NodeSerializerOptions;
+import cool.scx.object.serializer.NodeSerializer;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -18,12 +18,12 @@ import java.io.StringWriter;
 ///
 /// @author scx567888
 /// @version 0.0.1
-public final class JsonNodeSerializer {
+public final class JsonNodeSerializer implements NodeSerializer {
 
     private final JsonFactory jsonFactory;
-    private final NodeSerializerOptions options;
+    private final JsonNodeSerializerOptions options;
 
-    public JsonNodeSerializer(JsonFactory jsonFactory, NodeSerializerOptions options) {
+    public JsonNodeSerializer(JsonFactory jsonFactory, JsonNodeSerializerOptions options) {
         this.jsonFactory = jsonFactory;
         this.options = options;
         //有很多的 安全限制 jackson 已经覆盖了 我们直接使用
@@ -32,6 +32,7 @@ public final class JsonNodeSerializer {
                 .build());
     }
 
+    @Override
     public String serializeAsString(Node node) throws NodeSerializeException {
         var writer = new StringWriter();
         try {
