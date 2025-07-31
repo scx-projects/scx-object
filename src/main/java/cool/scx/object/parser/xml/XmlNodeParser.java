@@ -87,18 +87,24 @@ public class XmlNodeParser implements NodeParser {
     }
 
     private Node parse(XMLStreamReader2 reader) throws XMLStreamException {
-        int eventType = reader.getEventType();
-        if (eventType == XMLStreamConstants.START_DOCUMENT) {
+        // 1, 循环直到找到第一个元素起始 
+        while (true) {
+            int eventType = reader.getEventType();
+            if (eventType == XMLStreamConstants.START_ELEMENT) {
+                break;
+            }
             reader.next();
-        } else {
-            throw new XMLStreamException("Expected START_DOCUMENT, got " + eventType);
         }
-        eventType = reader.getEventType();
-        if (eventType == XMLStreamConstants.START_ELEMENT) {
-            return parseElement(reader);
-        } else {
-            throw new XMLStreamException("Expected START_ELEMENT, got " + eventType);
+        // 2, 解析
+        var node = parseElement(reader);
+
+        // 3, 验证是否存在后续多余内容
+        while (reader.hasNext()) {
+            // 非法内容 Woodstox 会为直接抛异常 无需我们处理
+            reader.next();
         }
+
+        return node;
     }
 
     private Node parseElement(XMLStreamReader2 reader) throws XMLStreamException {
@@ -175,6 +181,7 @@ public class XmlNodeParser implements NodeParser {
                 // 跳出循环
                 break;
             }
+            // 其余的 我们全部 当做不存在, 比如注释之类
         }
 
         // 没有任何子元素
