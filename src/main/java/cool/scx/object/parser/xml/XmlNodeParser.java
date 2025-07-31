@@ -3,7 +3,7 @@ package cool.scx.object.parser.xml;
 import cool.scx.object.node.*;
 import cool.scx.object.parser.NodeParseException;
 import cool.scx.object.parser.NodeParser;
-import cool.scx.object.parser.NodeParserOptions;
+import cool.scx.object.parser.json.JsonNodeParserOptions;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
 
@@ -12,7 +12,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.StringReader;
 
-import static cool.scx.object.parser.AutoCloseableXMLStreamReader.wrap;
+import static cool.scx.object.parser.xml.AutoCloseableXMLStreamReader.wrap;
 
 
 /// ### 解析规则:
@@ -53,13 +53,14 @@ public class XmlNodeParser implements NodeParser {
 
     // 这里我们使用 XMLInputFactory2, 因为 XMLInputFactory 功能过于羸弱 
     private final XMLInputFactory2 xmlFactory;
-    private final NodeParserOptions options;
+    private final JsonNodeParserOptions options;
 
-    public XmlNodeParser(XMLInputFactory2 xmlFactory, NodeParserOptions options) {
+    public XmlNodeParser(XMLInputFactory2 xmlFactory, JsonNodeParserOptions options) {
         this.xmlFactory = xmlFactory;
         this.options = options;
     }
 
+    @Override
     public Node parse(String xml) throws NodeParseException {
         try (var xmlStreamReader = wrap(xmlFactory.createXMLStreamReader(new StringReader(xml)))) {
             return parse(xmlStreamReader.reader());
@@ -68,6 +69,7 @@ public class XmlNodeParser implements NodeParser {
         }
     }
 
+    @Override
     public Node parse(File file) throws NodeParseException {
         try (var xmlStreamReader = wrap(xmlFactory.createXMLStreamReader(file))) {
             return parse(xmlStreamReader.reader());

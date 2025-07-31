@@ -2,14 +2,14 @@ package cool.scx.object.serializer.xml;
 
 import cool.scx.object.node.*;
 import cool.scx.object.serializer.NodeSerializeException;
-import cool.scx.object.serializer.XmlNodeSerializerOptions;
+import cool.scx.object.serializer.NodeSerializer;
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.StringWriter;
 
-import static cool.scx.object.serializer.AutoCloseableXMLStreamWriter.wrap;
+import static cool.scx.object.serializer.xml.AutoCloseableXMLStreamWriter.wrap;
 
 /// ### 序列化规则
 ///
@@ -36,7 +36,7 @@ import static cool.scx.object.serializer.AutoCloseableXMLStreamWriter.wrap;
 ///
 /// 7, {"": 123} -> <root>123</root>
 ///    key 为 "", 直接解包
-public final class XmlNodeSerializer {
+public final class XmlNodeSerializer implements NodeSerializer {
 
     private final XMLOutputFactory2 xmlFactory;
     private final XmlNodeSerializerOptions options;
@@ -50,6 +50,7 @@ public final class XmlNodeSerializer {
 //                .build());
     }
 
+    @Override
     public String serializeAsString(Node node) throws NodeSerializeException {
         var writer = new StringWriter();
         try (var xmlStreamWriter = wrap(xmlFactory.createXMLStreamWriter(writer))) {
