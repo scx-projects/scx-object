@@ -1,103 +1,107 @@
 package cool.scx.object.serializer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.StreamWriteConstraints;
-import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import cool.scx.object.node.*;
+import org.codehaus.stax2.XMLOutputFactory2;
+import org.codehaus.stax2.XMLStreamWriter2;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.StringWriter;
 
-/// 此序列化器基于递归下降方式进行序列化, 以保证代码的简洁和可维护性.
-/// 但 Node 实际上允许自引用, 也就是说存在无限递归导致栈溢出的风险.
-/// 因此, 我们通过 NodeSerializerOptions.maxNestingDepth 来间接限制递归深度,
-/// 避免超过 JVM 栈限制 (一般超过 3500 层为危险值)
+import static cool.scx.object.serializer.AutoCloseableXMLStreamWriter.wrap;
+
+/// ### 序列化规则
 ///
-/// @author scx567888
-/// @version 0.0.1
+/// 0. 跟标签默认 -> root, 没有上下文 key 可用的数组 默认 -> item.
+///    支持外部配置, 防止某些情况下的冲突
+///
+/// 1. "123" -> <root>123</root>
+///    值类型 -> 标准标签
+///
+/// 2. NULL -> <root/>
+///    NULL -> 闭合标签
+///
+/// 3. {"a": 123} -> <root><a>123</a></root>
+///    对象类型 -> 嵌套标签
+///
+/// 4. {"a": [1, 2]} -> <root><a>1</a><a>2</a></root>
+///    数组 -> 尝试重复
+///
+/// 5. [1, 2] -> <root><item>1</item><item>2</item></root>
+///    数组没有可用的上文 key -> 使用 item
+///
+/// 6. [1, [2]] -> <root><item>1</item><item><item>2</item></item></root>
+///    嵌套数组不进行任何扁平化
+///
+/// 7, {"": 123} -> <root>123</root>
+///    key 为 "", 直接解包
 public final class XmlNodeSerializer {
 
-    private final XmlFactory xmlFactory;
+    private final XMLOutputFactory2 xmlFactory;
     private final XmlNodeSerializerOptions options;
 
-    public XmlNodeSerializer(XmlFactory xmlFactory, XmlNodeSerializerOptions options) {
+    public XmlNodeSerializer(XMLOutputFactory2 xmlFactory, XmlNodeSerializerOptions options) {
         this.xmlFactory = xmlFactory;
         this.options = options;
         //有很多的 安全限制 jackson 已经覆盖了 我们直接使用
-        this.xmlFactory.setStreamWriteConstraints(StreamWriteConstraints.builder()
-                .maxNestingDepth(options.maxNestingDepth())
-                .build());
+//        this.xmlFactory.setStreamWriteConstraints(StreamWriteConstraints.builder()
+//                .maxNestingDepth(options.maxNestingDepth())
+//                .build());
     }
 
     public String serializeAsString(Node node) throws NodeSerializeException {
         var writer = new StringWriter();
-        try {
-            serializeAndClose(xmlFactory.createGenerator(writer), node);
-        } catch (JsonProcessingException e) {
-            throw new NodeSerializeException(e);
+        try (var xmlStreamWriter = wrap(xmlFactory.createXMLStreamWriter(writer))) {
+            serializeAndClose(xmlStreamWriter.writer(), node);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
         } catch (IOException e) {
-            // 在 StringWriter 中, IOException 理论上永远不会发生
             throw new RuntimeException(e);
         }
         return writer.toString();
     }
 
-    private void serializeAndClose(ToXmlGenerator generator, Node node) throws IOException {
-        try (generator) {
-            // Xml 需要根节点
-            generator.setNextName(options.xmlRootTagName());
-            // 顶级数组需要特殊处理
-            var isRootArray = node instanceof ArrayNode;
-            if (isRootArray) {
-                generator.writeStartObject();
-                generator.writeFieldName("item");
-            }
-            writeNode(generator, node);
-            // 顶级数组需要特殊处理
-            if (isRootArray) {
-                generator.writeEndObject();
-            }
-        }
+    private void serializeAndClose(XMLStreamWriter2 writer2, Node node) throws XMLStreamException, IOException {   // 顶级数组需要特殊处理
+        // 顶级数组需要特殊处理
+        var isRootArray = node instanceof ArrayNode;
+        writeNode(writer2, node, "root", isRootArray);
     }
 
-    private void writeNode(ToXmlGenerator generator, Node node) throws IOException {
+    private void writeNode(XMLStreamWriter2 writer2, Node node, String key, boolean inArray) throws XMLStreamException {
+        // 如果根节点本身就是 null, 直接返回自闭合标签
         switch (node) {
-            case ObjectNode objectNode -> writeObject(generator, objectNode);
-            case ArrayNode arrayNode -> writeArray(generator, arrayNode);
-            default -> writeScalar(generator, node);
-        }
-    }
-
-    private void writeObject(ToXmlGenerator generator, ObjectNode objectNode) throws IOException {
-        generator.writeStartObject();
-        for (var e : objectNode) {
-            generator.writeFieldName(e.getKey());
-            writeNode(generator, e.getValue());
-        }
-        generator.writeEndObject();
-    }
-
-    private void writeArray(ToXmlGenerator generator, ArrayNode arrayNode) throws IOException {
-        generator.writeStartArray();
-        for (var item : arrayNode) {
-            writeNode(generator, item);
-        }
-        generator.writeEndArray();
-    }
-
-    private void writeScalar(ToXmlGenerator generator, Node node) throws IOException {
-        switch (node) {
-            case TextNode textNode -> generator.writeString(textNode.value());
-            case IntNode intNode -> generator.writeNumber(intNode.value());
-            case LongNode longNode -> generator.writeNumber(longNode.value());
-            case FloatNode floatNode -> generator.writeNumber(floatNode.value());
-            case DoubleNode doubleNode -> generator.writeNumber(doubleNode.value());
-            case BigIntegerNode bigIntegerNode -> generator.writeNumber(bigIntegerNode.value());
-            case BigDecimalNode bigDecimalNode -> generator.writeNumber(bigDecimalNode.value());
-            case BooleanNode booleanNode -> generator.writeBoolean(booleanNode.value());
-            case NullNode _ -> generator.writeNull();
-            default -> throw new IOException("Unsupported Node Type: " + node.getClass().getName());
+            case NullNode _ -> {
+                writer2.writeEmptyElement(key);
+            }
+            case ValueNode valueNode -> {
+                if (key.isEmpty()) {
+                    writer2.writeCharacters(valueNode.toString());
+                } else {
+                    writer2.writeStartElement(key);
+                    writer2.writeCharacters(valueNode.toString());
+                    writer2.writeEndElement();
+                }
+            }
+            case ObjectNode objectNode -> {
+                writer2.writeStartElement(key);
+                for (var e : objectNode) {
+                    writeNode(writer2, e.getValue(), e.getKey(), false);
+                }
+                writer2.writeEndElement();
+            }
+            case ArrayNode arrayNode -> {
+                if (inArray) {
+                    writer2.writeStartElement(key);
+                    for (var e : arrayNode) {
+                        writeNode(writer2, e, "item", true);
+                    }
+                    writer2.writeEndElement();
+                } else {
+                    for (var e : arrayNode) {
+                        writeNode(writer2, e, key, true);
+                    }
+                }
+            }
         }
     }
 
