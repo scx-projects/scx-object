@@ -13,5 +13,5 @@ public class NodeSerializeException extends RuntimeException {
     public NodeSerializeException(String message) {
         super(message);
     }
-    
+
 }
