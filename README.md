@@ -1,5 +1,6 @@
-# SCX Object
-
+<p align="center">
+    <img src="https://scx.cool/scx-logo/scx-object-logo.svg" width="300px"  alt="scx-object-logo"/>
+</p>
 <p align="center">
     <a target="_blank" href="https://github.com/scx-projects/scx-object/actions/workflows/ci.yml">
         <img src="https://github.com/scx-projects/scx-object/actions/workflows/ci.yml/badge.svg" alt="CI"/>

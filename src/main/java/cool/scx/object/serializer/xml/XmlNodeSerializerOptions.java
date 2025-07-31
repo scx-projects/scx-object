@@ -1,4 +1,4 @@
-package cool.scx.object.serializer;
+package cool.scx.object.serializer.xml;
 
 import javax.xml.namespace.QName;
 

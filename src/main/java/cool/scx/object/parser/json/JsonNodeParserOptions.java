@@ -1,10 +1,10 @@
-package cool.scx.object.parser;
+package cool.scx.object.parser.json;
 
 /// NodeParserOptions
 ///
 /// @author scx567888
 /// @version 0.0.1
-public final class NodeParserOptions {
+public final class JsonNodeParserOptions {
 
     // 重复字段策略
     private DuplicateFieldPolicy duplicateFieldPolicy;
@@ -21,7 +21,7 @@ public final class NodeParserOptions {
     // 最大数字长度
     private int maxNumberLength;
 
-    public NodeParserOptions() {
+    public JsonNodeParserOptions() {
         this.duplicateFieldPolicy = DuplicateFieldPolicy.COVER;
         this.maxNestingDepth = 200; // 默认 200 既不会轻易栈溢出, 也足够 99.99% 的情况
         this.maxArraySize = 10 * 10000;
@@ -35,7 +35,7 @@ public final class NodeParserOptions {
         return duplicateFieldPolicy;
     }
 
-    public NodeParserOptions duplicateFieldPolicy(DuplicateFieldPolicy duplicateFieldPolicy) {
+    public JsonNodeParserOptions duplicateFieldPolicy(DuplicateFieldPolicy duplicateFieldPolicy) {
         if (duplicateFieldPolicy == null) {
             throw new NullPointerException("duplicateFieldPolicy cannot be null");
         }
@@ -47,7 +47,7 @@ public final class NodeParserOptions {
         return maxNestingDepth;
     }
 
-    public NodeParserOptions maxNestingDepth(int maxNestingDepth) {
+    public JsonNodeParserOptions maxNestingDepth(int maxNestingDepth) {
         if (maxNestingDepth < 0) {
             throw new IllegalArgumentException("maxNestingDepth cannot < 0");
         }
@@ -59,7 +59,7 @@ public final class NodeParserOptions {
         return maxArraySize;
     }
 
-    public NodeParserOptions maxArraySize(int maxArraySize) {
+    public JsonNodeParserOptions maxArraySize(int maxArraySize) {
         if (maxArraySize < 0) {
             throw new IllegalArgumentException("maxArraySize cannot < 0");
         }
@@ -71,7 +71,7 @@ public final class NodeParserOptions {
         return maxFieldCount;
     }
 
-    public NodeParserOptions maxFieldCount(int maxFieldCount) {
+    public JsonNodeParserOptions maxFieldCount(int maxFieldCount) {
         if (maxFieldCount < 0) {
             throw new IllegalArgumentException("maxFieldCount cannot < 0");
         }
@@ -83,7 +83,7 @@ public final class NodeParserOptions {
         return maxStringLength;
     }
 
-    public NodeParserOptions maxStringLength(int maxStringLength) {
+    public JsonNodeParserOptions maxStringLength(int maxStringLength) {
         if (maxStringLength < 0) {
             throw new IllegalArgumentException("maxStringLength cannot < 0");
         }
@@ -95,7 +95,7 @@ public final class NodeParserOptions {
         return maxFieldNameLength;
     }
 
-    public NodeParserOptions maxFieldNameLength(int maxFieldNameLength) {
+    public JsonNodeParserOptions maxFieldNameLength(int maxFieldNameLength) {
         if (maxFieldNameLength < 0) {
             throw new IllegalArgumentException("maxFieldNameLength cannot < 0");
         }
@@ -107,7 +107,7 @@ public final class NodeParserOptions {
         return maxNumberLength;
     }
 
-    public NodeParserOptions maxNumberLength(int maxNumberLength) {
+    public JsonNodeParserOptions maxNumberLength(int maxNumberLength) {
         if (maxNumberLength < 0) {
             throw new IllegalArgumentException("maxNumberLength cannot < 0");
         }

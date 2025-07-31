@@ -1,10 +1,12 @@
-package cool.scx.object.serializer;
+package cool.scx.object.serializer.json;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.StreamWriteConstraints;
-import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import cool.scx.object.node.*;
+import cool.scx.object.serializer.NodeSerializeException;
+import cool.scx.object.serializer.NodeSerializer;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -16,24 +18,25 @@ import java.io.StringWriter;
 ///
 /// @author scx567888
 /// @version 0.0.1
-public final class XmlNodeSerializer {
+public final class JsonNodeSerializer implements NodeSerializer {
 
-    private final XmlFactory xmlFactory;
-    private final XmlNodeSerializerOptions options;
+    private final JsonFactory jsonFactory;
+    private final JsonNodeSerializerOptions options;
 
-    public XmlNodeSerializer(XmlFactory xmlFactory, XmlNodeSerializerOptions options) {
-        this.xmlFactory = xmlFactory;
+    public JsonNodeSerializer(JsonFactory jsonFactory, JsonNodeSerializerOptions options) {
+        this.jsonFactory = jsonFactory;
         this.options = options;
         //有很多的 安全限制 jackson 已经覆盖了 我们直接使用
-        this.xmlFactory.setStreamWriteConstraints(StreamWriteConstraints.builder()
+        this.jsonFactory.setStreamWriteConstraints(StreamWriteConstraints.builder()
                 .maxNestingDepth(options.maxNestingDepth())
                 .build());
     }
 
+    @Override
     public String serializeAsString(Node node) throws NodeSerializeException {
         var writer = new StringWriter();
         try {
-            serializeAndClose(xmlFactory.createGenerator(writer), node);
+            serializeAndClose(jsonFactory.createGenerator(writer), node);
         } catch (JsonProcessingException e) {
             throw new NodeSerializeException(e);
         } catch (IOException e) {
@@ -43,25 +46,13 @@ public final class XmlNodeSerializer {
         return writer.toString();
     }
 
-    private void serializeAndClose(ToXmlGenerator generator, Node node) throws IOException {
+    private void serializeAndClose(JsonGenerator generator, Node node) throws IOException {
         try (generator) {
-            // Xml 需要根节点
-            generator.setNextName(options.xmlRootTagName());
-            // 顶级数组需要特殊处理
-            var isRootArray = node instanceof ArrayNode;
-            if (isRootArray) {
-                generator.writeStartObject();
-                generator.writeFieldName("item");
-            }
             writeNode(generator, node);
-            // 顶级数组需要特殊处理
-            if (isRootArray) {
-                generator.writeEndObject();
-            }
         }
     }
 
-    private void writeNode(ToXmlGenerator generator, Node node) throws IOException {
+    private void writeNode(JsonGenerator generator, Node node) throws IOException {
         switch (node) {
             case ObjectNode objectNode -> writeObject(generator, objectNode);
             case ArrayNode arrayNode -> writeArray(generator, arrayNode);
@@ -69,7 +60,7 @@ public final class XmlNodeSerializer {
         }
     }
 
-    private void writeObject(ToXmlGenerator generator, ObjectNode objectNode) throws IOException {
+    private void writeObject(JsonGenerator generator, ObjectNode objectNode) throws IOException {
         generator.writeStartObject();
         for (var e : objectNode) {
             generator.writeFieldName(e.getKey());
@@ -78,7 +69,7 @@ public final class XmlNodeSerializer {
         generator.writeEndObject();
     }
 
-    private void writeArray(ToXmlGenerator generator, ArrayNode arrayNode) throws IOException {
+    private void writeArray(JsonGenerator generator, ArrayNode arrayNode) throws IOException {
         generator.writeStartArray();
         for (var item : arrayNode) {
             writeNode(generator, item);
@@ -86,7 +77,7 @@ public final class XmlNodeSerializer {
         generator.writeEndArray();
     }
 
-    private void writeScalar(ToXmlGenerator generator, Node node) throws IOException {
+    private void writeScalar(JsonGenerator generator, Node node) throws IOException {
         switch (node) {
             case TextNode textNode -> generator.writeString(textNode.value());
             case IntNode intNode -> generator.writeNumber(intNode.value());
