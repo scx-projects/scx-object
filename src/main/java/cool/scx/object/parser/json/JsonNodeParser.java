@@ -3,6 +3,7 @@ package cool.scx.object.parser.json;
 import com.fasterxml.jackson.core.*;
 import cool.scx.object.node.*;
 import cool.scx.object.parser.NodeParseException;
+import cool.scx.object.parser.NodeParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,12 +15,12 @@ import java.io.IOException;
 ///
 /// @author scx567888
 /// @version 0.0.1
-public final class JsonNodeParser {
+public final class JsonNodeParser implements NodeParser {
 
     private final JsonFactory jsonFactory;
-    private final NodeParserOptions options;
+    private final JsonNodeParserOptions options;
 
-    public JsonNodeParser(JsonFactory jsonFactory, NodeParserOptions options) {
+    public JsonNodeParser(JsonFactory jsonFactory, JsonNodeParserOptions options) {
         this.jsonFactory = jsonFactory;
         this.options = options;
         //有很多的 安全限制 jackson 已经覆盖了 我们直接使用
