@@ -81,11 +81,18 @@
             <version>${jackson.version}</version>
         </dependency>
 
-        <!-- Jackson XML 兼容包 -->
+        <dependency>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>${woodstox.version}</version>
+        </dependency>
+
+        <!-- Jackson XML 测试包 -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>${jackson.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- TestNG 测试包 -->
@@ -103,6 +110,7 @@
         <!-- *********************** 以下为依赖包版本 *********************** -->
         <scx-reflect.version>4.1.2</scx-reflect.version>
         <jackson.version>2.19.2</jackson.version>
+        <woodstox.version>7.1.1</woodstox.version>
         <testng.version>7.10.2</testng.version>
 
     </properties>
