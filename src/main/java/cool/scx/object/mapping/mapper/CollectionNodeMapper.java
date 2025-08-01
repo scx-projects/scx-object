@@ -41,7 +41,7 @@ public final class CollectionNodeMapper implements NodeMapper<Collection<?>> {
         if (node.isNull()) {
             return null;
         }
-        //2, 只处理 ArrayNode 类型
+        //2, 先处理 ArrayNode 类型
         if (node instanceof ArrayNode arrayNode) {
             Collection<Object> result = createCollection(arrayNode.size());
             for (var n : arrayNode) {
@@ -50,8 +50,11 @@ public final class CollectionNodeMapper implements NodeMapper<Collection<?>> {
             }
             return result;
         }
-        //3, 非 ArrayNode 类型无法转换直接报错
-        throw new NodeMappingException("Unsupported node type: " + node.getClass());
+        //3, 非数组我们尝试宽容处理
+        Collection<Object> result = createCollection(1);
+        var i = componentNodeMapper.fromNode(node, context);
+        result.add(i);
+        return result;
     }
 
     private Collection<Object> createCollection(int size) throws NodeMappingException {

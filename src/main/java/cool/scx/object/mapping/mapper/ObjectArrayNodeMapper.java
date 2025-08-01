@@ -101,25 +101,136 @@ public final class ObjectArrayNodeMapper implements NodeMapper<Object> {
     }
 
     @Override
-    public Object[] fromNode(Node node, FromNodeContext context) throws NodeMappingException {
+    public Object fromNode(Node node, FromNodeContext context) throws NodeMappingException {
         //1, 处理 null
         if (node.isNull()) {
             return null;
         }
         //2, 先处理 ArrayNode 类型
         if (node instanceof ArrayNode arrayNode) {
-            var result = (Object[]) arrayTypeInfo.newArray(arrayNode.size());
-            var i = 0;
-            for (var e : arrayNode) {
-                result[i] = componentNodeMapper.fromNode(e, context);
-                i = i + 1;
+            // 这里需要特殊循环处理 
+            var array = arrayTypeInfo.newArray(arrayNode.size());
+
+            switch (array) {
+                case Object[] result -> {
+                    var i = 0;
+                    for (var e : arrayNode) {
+                        result[i] = componentNodeMapper.fromNode(e, context);
+                        i = i + 1;
+                    }
+                    return result;
+                }
+                case byte[] result -> {
+                    var i = 0;
+                    for (var e : arrayNode) {
+                        result[i] = (byte) componentNodeMapper.fromNode(e, context);
+                        i = i + 1;
+                    }
+                    return result;
+                }
+                case short[] result -> {
+                    var i = 0;
+                    for (var e : arrayNode) {
+                        result[i] = (short) componentNodeMapper.fromNode(e, context);
+                        i = i + 1;
+                    }
+                    return result;
+                }
+                case int[] result -> {
+                    var i = 0;
+                    for (var e : arrayNode) {
+                        result[i] = (int) componentNodeMapper.fromNode(e, context);
+                        i = i + 1;
+                    }
+                    return result;
+                }
+                case long[] result -> {
+                    var i = 0;
+                    for (var e : arrayNode) {
+                        result[i] = (long) componentNodeMapper.fromNode(e, context);
+                        i = i + 1;
+                    }
+                    return result;
+                }
+                case float[] result -> {
+                    var i = 0;
+                    for (var e : arrayNode) {
+                        result[i] = (float) componentNodeMapper.fromNode(e, context);
+                        i = i + 1;
+                    }
+                    return result;
+                }
+                case double[] result -> {
+                    var i = 0;
+                    for (var e : arrayNode) {
+                        result[i] = (double) componentNodeMapper.fromNode(e, context);
+                        i = i + 1;
+                    }
+                    return result;
+                }
+                case boolean[] result -> {
+                    var i = 0;
+                    for (var e : arrayNode) {
+                        result[i] = (boolean) componentNodeMapper.fromNode(e, context);
+                        i = i + 1;
+                    }
+                    return result;
+                }
+                case char[] result -> {
+                    var i = 0;
+                    for (var e : arrayNode) {
+                        result[i] = (char) componentNodeMapper.fromNode(e, context);
+                        i = i + 1;
+                    }
+                    return result;
+                }
+                // 这里应该不可达
+                default -> throw new NodeMappingException("Unsupported type: " + array.getClass());
             }
-            return result;
         }
         //3, 非数组我们尝试宽容处理
-        var result = (Object[]) arrayTypeInfo.newArray(1);
-        result[0] = componentNodeMapper.fromNode(node, context);
-        return result;
+        var array = arrayTypeInfo.newArray(1);
+
+        switch (array) {
+            case Object[] result -> {
+                result[0] = componentNodeMapper.fromNode(node, context);
+                return result;
+            }
+            case byte[] result -> {
+                result[0] = (byte) componentNodeMapper.fromNode(node, context);
+                return result;
+            }
+            case short[] result -> {
+                result[0] = (short) componentNodeMapper.fromNode(node, context);
+                return result;
+            }
+            case int[] result -> {
+                result[0] = (int) componentNodeMapper.fromNode(node, context);
+                return result;
+            }
+            case long[] result -> {
+                result[0] = (long) componentNodeMapper.fromNode(node, context);
+                return result;
+            }
+            case float[] result -> {
+                result[0] = (float) componentNodeMapper.fromNode(node, context);
+                return result;
+            }
+            case double[] result -> {
+                result[0] = (double) componentNodeMapper.fromNode(node, context);
+                return result;
+            }
+            case boolean[] result -> {
+                result[0] = (boolean) componentNodeMapper.fromNode(node, context);
+                return result;
+            }
+            case char[] result -> {
+                result[0] = (char) componentNodeMapper.fromNode(node, context);
+                return result;
+            }
+            // 这里应该不可达
+            default -> throw new NodeMappingException("Unsupported type: " + array.getClass());
+        }
     }
 
 }
