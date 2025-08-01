@@ -11,6 +11,8 @@ import cool.scx.object.node.ValueNode;
 
 /// DoubleNodeMapper
 ///
+/// 支持 单值数组解包
+/// 
 /// @author scx567888
 /// @version 0.0.1
 public final class DoubleNodeMapper implements NodeMapper<Double> {
