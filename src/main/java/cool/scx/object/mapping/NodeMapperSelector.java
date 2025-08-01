@@ -8,7 +8,6 @@ import cool.scx.object.mapping.mapper.node.*;
 import cool.scx.object.mapping.mapper.other.URINodeMapper;
 import cool.scx.object.mapping.mapper.other.UUIDNodeMapper;
 import cool.scx.object.mapping.mapper.primitive.*;
-import cool.scx.object.mapping.mapper.primitive_array.*;
 import cool.scx.object.mapping.mapper.time.DateNodeMapper;
 import cool.scx.object.mapping.mapper.time.DurationNodeMapper;
 import cool.scx.object.mapping.mapper.time.TemporalAccessorNodeMapper;
@@ -72,17 +71,6 @@ public final class NodeMapperSelector {
         //大数字类型
         registerNodeMapper(BigInteger.class, new BigIntegerNodeMapper());
         registerNodeMapper(BigDecimal.class, new BigDecimalNodeMapper());
-
-
-        //基本类型数组类型
-        registerNodeMapper(byte[].class, new ByteArrayNodeMapper());
-        registerNodeMapper(short[].class, new ShortArrayNodeMapper());
-        registerNodeMapper(int[].class, new IntArrayNodeMapper());
-        registerNodeMapper(long[].class, new LongArrayNodeMapper());
-        registerNodeMapper(float[].class, new FloatArrayNodeMapper());
-        registerNodeMapper(double[].class, new DoubleArrayNodeMapper());
-        registerNodeMapper(boolean[].class, new BooleanArrayNodeMapper());
-        registerNodeMapper(char[].class, new CharArrayNodeMapper());
 
 
         // 时间
