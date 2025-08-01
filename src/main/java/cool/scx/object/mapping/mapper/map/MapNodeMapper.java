@@ -4,10 +4,7 @@ import cool.scx.object.mapping.FromNodeContext;
 import cool.scx.object.mapping.NodeMapper;
 import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.mapping.ToNodeContext;
-import cool.scx.object.node.Node;
-import cool.scx.object.node.ObjectNode;
-import cool.scx.object.node.TextNode;
-import cool.scx.object.node.ValueNode;
+import cool.scx.object.node.*;
 import cool.scx.reflect.ClassInfo;
 
 import java.util.HashMap;
@@ -18,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /// MapNodeMapper
 ///
+/// 支持 单值数组解包
+/// 
 /// @author scx567888
 /// @version 0.0.1
 public final class MapNodeMapper implements NodeMapper<Map<?, ?>> {
@@ -69,7 +68,11 @@ public final class MapNodeMapper implements NodeMapper<Map<?, ?>> {
             }
             return result;
         }
-        //3, 非 ObjectNode 类型无法转换直接报错
+        //3, 尝试处理 单值数组 (这里假设 ArrayNode 不存在自引用)
+        if (node instanceof ArrayNode arrayNode && arrayNode.size() == 1) {
+            return this.fromNode(arrayNode.get(0), context);
+        }
+        //4, 非 ObjectNode 类型无法转换直接报错
         throw new NodeMappingException("Unsupported node type: " + node.getClass());
     }
 
