@@ -117,7 +117,7 @@ public final class NodeMapperSelector {
 
 
         // 注意顺序
-        registerNodeMapperFactory(new ObjectArrayNodeMapperFactory());
+        registerNodeMapperFactory(new ArrayNodeMapperFactory());
         registerNodeMapperFactory(new CollectionNodeMapperFactory());
         registerNodeMapperFactory(new MapNodeMapperFactory());
         registerNodeMapperFactory(new BeanNodeMapperFactory());

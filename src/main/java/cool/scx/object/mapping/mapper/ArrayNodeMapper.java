@@ -8,16 +8,16 @@ import cool.scx.object.node.ArrayNode;
 import cool.scx.object.node.Node;
 import cool.scx.reflect.ArrayTypeInfo;
 
-/// ObjectArrayNodeMapper
+/// ArrayNodeMapper
 ///
 /// @author scx567888
 /// @version 0.0.1
-public final class ObjectArrayNodeMapper implements NodeMapper<Object> {
+public final class ArrayNodeMapper implements NodeMapper<Object> {
 
     private final ArrayTypeInfo arrayTypeInfo;
     private final NodeMapper<Object> componentNodeMapper;
 
-    public ObjectArrayNodeMapper(ArrayTypeInfo arrayTypeInfo, NodeMapper<Object> componentNodeMapper) {
+    public ArrayNodeMapper(ArrayTypeInfo arrayTypeInfo, NodeMapper<Object> componentNodeMapper) {
         this.arrayTypeInfo = arrayTypeInfo;
         // 这个只能用于 fromNode, 因为 toNode 有可能是 Object[]
         this.componentNodeMapper = componentNodeMapper;
