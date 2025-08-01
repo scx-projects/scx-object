@@ -192,7 +192,7 @@ public final class ArrayNodeMapper implements NodeMapper<Object> {
                 default -> throw new NodeMappingException("Unsupported type: " + array.getClass());
             }
         }
-        //3, 非数组我们尝试宽容处理
+        //3, 尝试宽容处理 单值包裹为 单值数组
         var array = arrayTypeInfo.newArray(1);
 
         switch (array) {

@@ -52,7 +52,7 @@ public final class CollectionNodeMapper implements NodeMapper<Collection<?>> {
             }
             return result;
         }
-        //3, 非数组我们尝试宽容处理
+        //3, 尝试宽容处理 单值包裹为 单值集合
         Collection<Object> result = createCollection(1);
         var i = componentNodeMapper.fromNode(node, context);
         result.add(i);
