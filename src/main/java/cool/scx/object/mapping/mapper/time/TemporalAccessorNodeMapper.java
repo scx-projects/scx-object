@@ -13,8 +13,10 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQuery;
 
-/// LocalDateTimeNodeMapper
+/// TemporalAccessorNodeMapper
 ///
+/// 支持 单值数组解包
+/// 
 /// @author scx567888
 /// @version 0.0.1
 public final class TemporalAccessorNodeMapper<T extends TemporalAccessor> implements NodeMapper<T> {

@@ -13,6 +13,8 @@ import java.time.format.DateTimeParseException;
 
 /// DurationNodeMapper
 ///
+/// 支持 单值数组解包
+/// 
 /// @author scx567888
 /// @version 0.0.1
 public final class DurationNodeMapper implements NodeMapper<Duration> {
