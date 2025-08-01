@@ -12,6 +12,8 @@ import java.util.*;
 
 /// CollectionNodeMapper
 ///
+/// 支持 单值包裹为 单值集合
+/// 
 /// @author scx567888
 /// @version 0.0.1
 public final class CollectionNodeMapper implements NodeMapper<Collection<?>> {
