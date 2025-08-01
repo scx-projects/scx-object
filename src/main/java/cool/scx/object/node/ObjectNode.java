@@ -53,6 +53,7 @@ public final class ObjectNode implements Node, Iterable<Map.Entry<String, Node>>
 
     @Override
     public ObjectNode deepCopy() {
+        // 这里假设 ObjectNode 不存在自引用
         var objectNode = new ObjectNode();
         for (var entry : this) {
             objectNode.put(entry.getKey(), entry.getValue().deepCopy());

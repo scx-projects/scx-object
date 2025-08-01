@@ -64,6 +64,7 @@ public final class ArrayNode implements Node, Iterable<Node> {
 
     @Override
     public ArrayNode deepCopy() {
+        // 这里假设 ArrayNode 不存在自引用
         var arrayNode = new ArrayNode(size());
         for (var node : this) {
             arrayNode.add(node.deepCopy());
