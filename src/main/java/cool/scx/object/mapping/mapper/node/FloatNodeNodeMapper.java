@@ -10,6 +10,9 @@ import cool.scx.object.node.ValueNode;
 
 /// FloatNodeNodeMapper
 ///
+/// 不支持 单值数组解包, 和 FloatNodeMapper 允许宽松处理不同
+/// FloatNode 作为数值的中间表示层, 必须保证数据结构的准确性
+/// 
 /// @author scx567888
 /// @version 0.0.1
 public final class FloatNodeNodeMapper implements NodeMapper<FloatNode> {
