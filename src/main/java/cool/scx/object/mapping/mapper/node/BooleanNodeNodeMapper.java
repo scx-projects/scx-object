@@ -10,6 +10,9 @@ import cool.scx.object.node.ValueNode;
 
 /// BooleanNodeNodeMapper
 ///
+/// 不支持 单值数组解包, 和 BooleanNodeMapper 允许宽松处理不同
+/// BooleanNode 作为中间表示层, 必须保证数据结构的准确性
+///
 /// @author scx567888
 /// @version 0.0.1
 public final class BooleanNodeNodeMapper implements NodeMapper<BooleanNode> {

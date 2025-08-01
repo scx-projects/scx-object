@@ -8,6 +8,9 @@ import cool.scx.object.node.*;
 
 /// NumericNodeNodeMapper
 ///
+/// 不支持 单值数组解包, 和 IntNodeMapper 之类 允许宽松处理不同
+/// NumberNode 作为中间表示层, 必须保证数据结构的准确性
+///
 /// @author scx567888
 /// @version 0.0.1
 public final class NumericNodeNodeMapper implements NodeMapper<NumberNode> {

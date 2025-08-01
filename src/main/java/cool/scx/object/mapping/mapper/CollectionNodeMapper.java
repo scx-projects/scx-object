@@ -12,6 +12,8 @@ import java.util.*;
 
 /// CollectionNodeMapper
 ///
+/// 支持 单值包裹为 单值集合
+///
 /// @author scx567888
 /// @version 0.0.1
 public final class CollectionNodeMapper implements NodeMapper<Collection<?>> {
@@ -41,7 +43,7 @@ public final class CollectionNodeMapper implements NodeMapper<Collection<?>> {
         if (node.isNull()) {
             return null;
         }
-        //2, 只处理 ArrayNode 类型
+        //2, 先处理 ArrayNode 类型
         if (node instanceof ArrayNode arrayNode) {
             Collection<Object> result = createCollection(arrayNode.size());
             for (var n : arrayNode) {
@@ -50,8 +52,11 @@ public final class CollectionNodeMapper implements NodeMapper<Collection<?>> {
             }
             return result;
         }
-        //3, 非 ArrayNode 类型无法转换直接报错
-        throw new NodeMappingException("Unsupported node type: " + node.getClass());
+        //3, 尝试宽容处理 单值包裹为 单值集合
+        Collection<Object> result = createCollection(1);
+        var i = componentNodeMapper.fromNode(node, context);
+        result.add(i);
+        return result;
     }
 
     private Collection<Object> createCollection(int size) throws NodeMappingException {

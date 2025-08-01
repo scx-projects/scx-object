@@ -10,6 +10,9 @@ import cool.scx.object.node.ValueNode;
 
 /// BigDecimalNodeNodeMapper
 ///
+/// 不支持 单值数组解包, 和 BigDecimalNodeMapper 允许宽松处理不同
+/// BigDecimalNode 作为中间表示层, 必须保证数据结构的准确性
+///
 /// @author scx567888
 /// @version 0.0.1
 public final class BigDecimalNodeNodeMapper implements NodeMapper<BigDecimalNode> {

@@ -4,11 +4,14 @@ import cool.scx.object.mapping.FromNodeContext;
 import cool.scx.object.mapping.NodeMapper;
 import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.mapping.ToNodeContext;
+import cool.scx.object.node.ArrayNode;
 import cool.scx.object.node.IntNode;
 import cool.scx.object.node.Node;
 import cool.scx.object.node.ValueNode;
 
 /// IntNodeMapper
+///
+/// 支持 单值数组解包
 ///
 /// @author scx567888
 /// @version 0.0.1
@@ -39,7 +42,11 @@ public final class IntNodeMapper implements NodeMapper<Integer> {
                 throw new NodeMappingException(e);
             }
         }
-        //3, 非值类型无法转换直接报错
+        //3, 尝试处理 单值数组 (这里假设 ArrayNode 不存在自引用)
+        if (node instanceof ArrayNode arrayNode && arrayNode.size() == 1) {
+            return this.fromNode(arrayNode.get(0), context);
+        }
+        //4, 非值类型无法转换直接报错
         throw new NodeMappingException("Unsupported node type: " + node.getClass());
     }
 
