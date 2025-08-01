@@ -10,6 +10,10 @@ import cool.scx.reflect.ArrayTypeInfo;
 
 /// ArrayNodeMapper
 ///
+/// 我们同时支持 基本类型数组和 Object[]
+///
+/// 同时还支持自动将非 ArrayNode 类型包装为 数组类型 以提高兼容性
+///
 /// @author scx567888
 /// @version 0.0.1
 public final class ArrayNodeMapper implements NodeMapper<Object> {
