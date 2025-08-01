@@ -9,6 +9,9 @@ import cool.scx.object.node.Node;
 
 /// ArrayNodeNodeMapper
 ///
+/// 不支持 单值包裹数组, 和 ArrayNodeMapper 以及 CollectionNodeMapper 允许宽容处理不同
+/// ArrayNode 作为数组的中间表示层, 必须保证数据结构的准确性
+///
 /// @author scx567888
 /// @version 0.0.1
 public final class ArrayNodeNodeMapper implements NodeMapper<ArrayNode> {
