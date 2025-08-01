@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import static cool.scx.object.node.NullNode.NULL;
 
 /// 通用对象处理器
-/// 
+///
 /// 支持 单值数组解包
 ///
 /// @author scx567888

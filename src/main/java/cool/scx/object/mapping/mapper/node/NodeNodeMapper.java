@@ -6,7 +6,7 @@ import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.Node;
 
 /// NodeNodeMapper
-/// 
+///
 /// 直接 deepCopy
 ///
 /// @author scx567888

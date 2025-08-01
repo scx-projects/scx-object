@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 /// BigDecimalNodeMapper
 ///
 /// 支持 单值数组解包
-/// 
+///
 /// @author scx567888
 /// @version 0.0.1
 public final class BigDecimalNodeMapper implements NodeMapper<BigDecimal> {
@@ -40,7 +40,7 @@ public final class BigDecimalNodeMapper implements NodeMapper<BigDecimal> {
         }
         //3, 尝试处理 单值数组 (这里假设 ArrayNode 不存在自引用)
         if (node instanceof ArrayNode arrayNode && arrayNode.size() == 1) {
-            return this.fromNode(arrayNode.get(0),context);
+            return this.fromNode(arrayNode.get(0), context);
         }
         //4, 非值类型无法转换直接报错
         throw new NodeMappingException("Unsupported node type: " + node.getClass());

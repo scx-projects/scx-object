@@ -11,7 +11,7 @@ import cool.scx.object.node.TextNode;
 import java.net.URI;
 
 /// URINodeMapper
-/// 
+///
 /// 支持 单值数组解包
 ///
 /// @author scx567888
