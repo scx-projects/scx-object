@@ -109,7 +109,7 @@
 
         <!-- *********************** 以下为依赖包版本 *********************** -->
         <scx-reflect.version>4.2.0</scx-reflect.version>
-        <jackson.version>2.20.0</jackson.version>
+        <jackson.version>2.20.1</jackson.version>
         <woodstox.version>7.1.1</woodstox.version>
         <testng.version>7.11.0</testng.version>
 
