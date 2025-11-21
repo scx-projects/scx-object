@@ -6,7 +6,7 @@ import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.ArrayNode;
 import cool.scx.object.node.Node;
-import cool.scx.reflect.ArrayTypeInfo;
+import dev.scx.reflect.ArrayTypeInfo;
 
 /// ArrayNodeMapper
 ///
@@ -112,7 +112,7 @@ public final class ArrayNodeMapper implements NodeMapper<Object> {
         }
         //2, 先处理 ArrayNode 类型
         if (node instanceof ArrayNode arrayNode) {
-            // 这里需要特殊循环处理 
+            // 这里需要特殊循环处理
             var array = arrayTypeInfo.newArray(arrayNode.size());
 
             switch (array) {

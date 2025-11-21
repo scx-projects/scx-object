@@ -5,7 +5,7 @@ import cool.scx.object.mapping.NodeMapper;
 import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.*;
-import cool.scx.reflect.ClassInfo;
+import dev.scx.reflect.ClassInfo;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -78,7 +78,7 @@ public final class MapNodeMapper implements NodeMapper<Map<?, ?>> {
 
     private String toKey(Object value, ToNodeContext context, MapNodeMapperOptions options) throws NodeMappingException {
         //1, 尝试将 key 转换为 String
-        var node = context.toNode(value, null);//todo 这里的 pathSegment 应该放什么? 
+        var node = context.toNode(value, null);//todo 这里的 pathSegment 应该放什么?
         //2, 处理 nullKey
         if (node.isNull()) {
             return options.nullKey();

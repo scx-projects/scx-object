@@ -5,8 +5,8 @@ import cool.scx.object.mapping.NodeMapperFactory;
 import cool.scx.object.mapping.NodeMapperSelector;
 import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.mapping.mapper.ArrayNodeMapper;
-import cool.scx.reflect.ArrayTypeInfo;
-import cool.scx.reflect.TypeInfo;
+import dev.scx.reflect.ArrayTypeInfo;
+import dev.scx.reflect.TypeInfo;
 
 public class ArrayNodeMapperFactory implements NodeMapperFactory {
 

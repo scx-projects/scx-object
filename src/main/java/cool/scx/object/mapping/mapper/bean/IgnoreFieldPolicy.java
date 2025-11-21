@@ -1,7 +1,7 @@
 package cool.scx.object.mapping.mapper.bean;
 
-import cool.scx.reflect.ClassInfo;
-import cool.scx.reflect.FieldInfo;
+import dev.scx.reflect.ClassInfo;
+import dev.scx.reflect.FieldInfo;
 
 public interface IgnoreFieldPolicy {
 

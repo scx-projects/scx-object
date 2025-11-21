@@ -1,7 +1,7 @@
 package cool.scx.object.test;
 
 import cool.scx.object.ScxObject;
-import cool.scx.reflect.TypeReference;
+import dev.scx.reflect.TypeReference;
 import org.testng.annotations.Test;
 
 import java.util.List;

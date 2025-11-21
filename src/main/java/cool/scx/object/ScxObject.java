@@ -17,14 +17,14 @@ import cool.scx.object.serializer.json.JsonNodeSerializer;
 import cool.scx.object.serializer.json.JsonNodeSerializerOptions;
 import cool.scx.object.serializer.xml.XmlNodeSerializer;
 import cool.scx.object.serializer.xml.XmlNodeSerializerOptions;
-import cool.scx.reflect.TypeInfo;
-import cool.scx.reflect.TypeReference;
+import dev.scx.reflect.TypeInfo;
+import dev.scx.reflect.TypeReference;
 
 import java.io.File;
 import java.io.IOException;
 
 import static cool.scx.object.parser.json.DuplicateFieldPolicy.COVER;
-import static cool.scx.reflect.ScxReflect.typeOf;
+import static dev.scx.reflect.ScxReflect.typeOf;
 
 /// ScxObject
 ///

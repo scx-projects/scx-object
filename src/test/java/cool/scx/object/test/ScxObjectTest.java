@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cool.scx.object.ScxObject;
 import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.serializer.NodeSerializeException;
-import cool.scx.reflect.TypeReference;
+import dev.scx.reflect.TypeReference;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;

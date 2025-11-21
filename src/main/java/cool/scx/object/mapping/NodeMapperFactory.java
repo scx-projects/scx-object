@@ -1,6 +1,6 @@
 package cool.scx.object.mapping;
 
-import cool.scx.reflect.TypeInfo;
+import dev.scx.reflect.TypeInfo;
 
 public interface NodeMapperFactory {
 

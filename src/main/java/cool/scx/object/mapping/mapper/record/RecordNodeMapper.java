@@ -7,10 +7,10 @@ import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.ArrayNode;
 import cool.scx.object.node.Node;
 import cool.scx.object.node.ObjectNode;
-import cool.scx.reflect.ClassInfo;
-import cool.scx.reflect.ConstructorInfo;
-import cool.scx.reflect.ParameterInfo;
-import cool.scx.reflect.RecordComponentInfo;
+import dev.scx.reflect.ClassInfo;
+import dev.scx.reflect.ConstructorInfo;
+import dev.scx.reflect.ParameterInfo;
+import dev.scx.reflect.RecordComponentInfo;
 
 import java.lang.reflect.InvocationTargetException;
 

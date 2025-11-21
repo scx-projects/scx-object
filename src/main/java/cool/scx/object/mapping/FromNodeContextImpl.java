@@ -1,7 +1,7 @@
 package cool.scx.object.mapping;
 
 import cool.scx.object.node.Node;
-import cool.scx.reflect.TypeInfo;
+import dev.scx.reflect.TypeInfo;
 
 /// 默认映射上下文
 ///
