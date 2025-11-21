@@ -11,7 +11,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
-import static cool.scx.reflect.ScxReflect.typeOf;
+import static dev.scx.reflect.ScxReflect.typeOf;
 
 /// 未指定类型的 Object.class
 ///
@@ -21,7 +21,7 @@ public final class UntypedNodeMapper implements NodeMapper<Object> {
 
     @Override
     public Node toNode(Object value, ToNodeContext context) {
-        // 实际上 只是一个空的 Object 对象, 我们 转换为一个空的 ObjectNode 
+        // 实际上 只是一个空的 Object 对象, 我们 转换为一个空的 ObjectNode
         return new ObjectNode();
     }
 
@@ -32,7 +32,7 @@ public final class UntypedNodeMapper implements NodeMapper<Object> {
             case NullNode _ -> null;
             // ObjectNode 就用 Map
             case ObjectNode _ -> context.fromNode(node, typeOf(Map.class));
-            // ArrayNode 就用 List 
+            // ArrayNode 就用 List
             case ArrayNode _ -> context.fromNode(node, typeOf(List.class));
             // 其余字面量选择最接近的
             case IntNode _ -> context.fromNode(node, typeOf(Integer.class));

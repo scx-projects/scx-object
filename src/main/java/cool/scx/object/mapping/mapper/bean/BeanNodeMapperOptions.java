@@ -1,8 +1,8 @@
 package cool.scx.object.mapping.mapper.bean;
 
 import cool.scx.object.mapping.NodeMapperOptions;
-import cool.scx.reflect.ClassInfo;
-import cool.scx.reflect.FieldInfo;
+import dev.scx.reflect.ClassInfo;
+import dev.scx.reflect.FieldInfo;
 
 import java.util.ArrayList;
 import java.util.List;

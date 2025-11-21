@@ -13,7 +13,7 @@ import cool.scx.object.mapping.mapper.time.DurationNodeMapper;
 import cool.scx.object.mapping.mapper.time.TemporalAccessorNodeMapper;
 import cool.scx.object.mapping.mapper_factory.*;
 import cool.scx.object.node.*;
-import cool.scx.reflect.TypeInfo;
+import dev.scx.reflect.TypeInfo;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static cool.scx.reflect.ScxReflect.typeOf;
+import static dev.scx.reflect.ScxReflect.typeOf;
 import static java.time.format.DateTimeFormatter.*;
 
 /// NodeMapperSelector (支持动态扩容)

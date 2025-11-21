@@ -5,12 +5,12 @@ import cool.scx.object.mapping.NodeMapperFactory;
 import cool.scx.object.mapping.NodeMapperSelector;
 import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.mapping.mapper.map.MapNodeMapper;
-import cool.scx.reflect.ClassInfo;
-import cool.scx.reflect.TypeInfo;
+import dev.scx.reflect.ClassInfo;
+import dev.scx.reflect.TypeInfo;
 
 import java.util.Map;
 
-import static cool.scx.reflect.ScxReflect.typeOf;
+import static dev.scx.reflect.ScxReflect.typeOf;
 
 public class MapNodeMapperFactory implements NodeMapperFactory {
 

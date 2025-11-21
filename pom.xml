@@ -4,12 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>cool.scx</groupId>
+        <groupId>dev.scx</groupId>
         <artifactId>scx-parent</artifactId>
-        <version>28</version>
+        <version>1</version>
         <relativePath/>
     </parent>
 
+    <groupId>cool.scx</groupId>
     <artifactId>scx-object</artifactId>
     <version>2.0.0</version>
     <packaging>jar</packaging>
@@ -56,7 +57,7 @@
                         </manifest>
                     </archive>
                     <!-- 此处因为没有类似 maven-source-plugin 插件中 excludeResources 的选项 -->
-                    <!-- 所以在这里手动排除资源文件 , 具体文件说明见下方 -->
+                    <!-- 所以在这里手动排除资源文件, 具体文件说明见下方 -->
                     <excludes>
                         <!-- 默认 git 占位空文件 -->
                         <exclude>/.gitkeep</exclude>
@@ -70,7 +71,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>cool.scx</groupId>
+            <groupId>dev.scx</groupId>
             <artifactId>scx-reflect</artifactId>
             <version>${scx-reflect.version}</version>
         </dependency>
@@ -108,7 +109,7 @@
     <properties>
 
         <!-- *********************** 以下为依赖包版本 *********************** -->
-        <scx-reflect.version>4.2.0</scx-reflect.version>
+        <scx-reflect.version>0.0.1</scx-reflect.version>
         <jackson.version>2.20.0</jackson.version>
         <woodstox.version>7.1.1</woodstox.version>
         <testng.version>7.11.0</testng.version>

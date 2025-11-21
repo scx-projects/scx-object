@@ -1,7 +1,7 @@
 package cool.scx.object.mapping;
 
 import cool.scx.object.node.Node;
-import cool.scx.reflect.TypeInfo;
+import dev.scx.reflect.TypeInfo;
 
 /// Node -> Object 上下文
 public interface FromNodeContext {

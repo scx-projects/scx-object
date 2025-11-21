@@ -6,7 +6,7 @@ import cool.scx.object.mapping.NodeMappingException;
 import cool.scx.object.mapping.ToNodeContext;
 import cool.scx.object.node.ArrayNode;
 import cool.scx.object.node.Node;
-import cool.scx.reflect.ClassInfo;
+import dev.scx.reflect.ClassInfo;
 
 import java.util.*;
 

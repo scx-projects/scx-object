@@ -4,9 +4,9 @@ import cool.scx.object.mapping.NodeMapper;
 import cool.scx.object.mapping.NodeMapperFactory;
 import cool.scx.object.mapping.NodeMapperSelector;
 import cool.scx.object.mapping.mapper.EnumNodeMapper;
-import cool.scx.reflect.ClassInfo;
-import cool.scx.reflect.ClassKind;
-import cool.scx.reflect.TypeInfo;
+import dev.scx.reflect.ClassInfo;
+import dev.scx.reflect.ClassKind;
+import dev.scx.reflect.TypeInfo;
 
 public class EnumNodeMapperFactory implements NodeMapperFactory {
 
