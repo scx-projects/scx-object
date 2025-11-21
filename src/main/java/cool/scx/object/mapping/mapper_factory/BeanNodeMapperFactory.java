@@ -14,9 +14,9 @@ public class BeanNodeMapperFactory implements NodeMapperFactory {
         // 因为 ObjectNodeMapper 每种类型的对象只会创建一次, 所以这里 使用 Stream 并没有什么性能问题
         // 注意我们这里需要连父级的字段也带上
         return Arrays.stream(classInfo.allFields())
-                .filter(c -> !c.isStatic() && c.accessModifier() == AccessModifier.PUBLIC)
-                .peek(c -> c.setAccessible(true))// 处理一些类本身 就不是 public 的情况, 比如内部类
-                .toArray(FieldInfo[]::new);
+            .filter(c -> !c.isStatic() && c.accessModifier() == AccessModifier.PUBLIC)
+            .peek(c -> c.setAccessible(true))// 处理一些类本身 就不是 public 的情况, 比如内部类
+            .toArray(FieldInfo[]::new);
     }
 
     private static FieldInfo[] filterWritableFields(FieldInfo[] readableFields) {

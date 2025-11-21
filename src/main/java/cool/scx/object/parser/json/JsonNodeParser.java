@@ -25,11 +25,11 @@ public final class JsonNodeParser implements NodeParser {
         this.options = options;
         //有很多的 安全限制 jackson 已经覆盖了 我们直接使用
         this.jsonFactory.setStreamReadConstraints(StreamReadConstraints.builder()
-                .maxNestingDepth(options.maxNestingDepth())
-                .maxStringLength(options.maxStringLength())
-                .maxNumberLength(options.maxNumberLength())
-                .maxNameLength(options.maxFieldNameLength())
-                .build());
+            .maxNestingDepth(options.maxNestingDepth())
+            .maxStringLength(options.maxStringLength())
+            .maxNumberLength(options.maxNumberLength())
+            .maxNameLength(options.maxFieldNameLength())
+            .build());
     }
 
     @Override
@@ -156,13 +156,13 @@ public final class JsonNodeParser implements NodeParser {
                 parentNode.put(fieldName, newChildNode);
             }
             case IGNORE -> {
-                // 什么都不做 
+                // 什么都不做
             }
             case THROW -> {
                 throw new JsonParseException(parser, "检测到重复字段: \"" + fieldName + "\"");
             }
             case MERGE -> {
-                //我们默认尝试转换成 数组 
+                //我们默认尝试转换成 数组
                 if (oldChildNode instanceof ArrayNode arrayNode) {
                     arrayNode.add(newChildNode);
                 } else {

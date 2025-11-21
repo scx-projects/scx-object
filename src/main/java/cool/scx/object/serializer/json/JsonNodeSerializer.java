@@ -28,8 +28,8 @@ public final class JsonNodeSerializer implements NodeSerializer {
         this.options = options;
         //有很多的 安全限制 jackson 已经覆盖了 我们直接使用
         this.jsonFactory.setStreamWriteConstraints(StreamWriteConstraints.builder()
-                .maxNestingDepth(options.maxNestingDepth())
-                .build());
+            .maxNestingDepth(options.maxNestingDepth())
+            .build());
     }
 
     @Override
